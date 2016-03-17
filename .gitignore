@@ -4,6 +4,14 @@
 data
 fig/
 
+# Images
+# ——————
+
+*jpg
+*jpeg
+*.gif
+*.png
+
 # Python
 # ——————
 
