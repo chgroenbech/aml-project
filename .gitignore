@@ -1,7 +1,8 @@
 # Specific folders and files
 # ——————————————————————————
 
-
+data
+fig/
 
 # Python
 # ——————
