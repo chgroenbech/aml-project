@@ -21,9 +21,6 @@ colours = [
 # Default paths for input and output
 
 def script_directory():
-    # abspath = os.path.abspath(__file__)
-    # dname = os.path.dirname(abspath)
-    # os.chdir(dname)
     os.chdir(sys.path[0])
 
 def savepath(path=None):
