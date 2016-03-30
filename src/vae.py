@@ -4,21 +4,19 @@ import theano.tensor as T
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
 from lasagne.layers.base import Layer
-from lasagne.layers.base import Layer
 from lasagne import init
+from lasagne.nonlinearities import rectify
 
-
-
+import lasagne
 
 class VAE:
-    """docstring for VAE"""
     def __init__(self, n_in, n_hidden_enc, n_out, n_hidden_dec=None, trans_func=rectify, batch_size=200):
         super(VAE, self).__init__()
         self.batch_size = batch_size
 
         self.srng = RandomStreams()
         
-        shape = n_in.insert(0,batch_size)
+        shape = [batch_size, *n_in]
         l_in_enc = lasagne.layers.InputLayer(shape=shape)
         l_prev_enc = l_in_enc
 
@@ -90,7 +88,6 @@ class VAE:
 
 
 class VAELayer(Layer):
-    """docstring for VAELayer"""
     def __init__(self, incoming, enc, dec,
                  x_distribution='bernoulli',
                  pz_distribution='gaussian',
@@ -125,7 +122,7 @@ class VAELayer(Layer):
             p.name = "VAELayer dec :" + p.name
 
         self.num_hid_enc = enc.output_shape[1]
-        self.num_hid_dec = dec.output_shape[1:3]
+        self.num_hid_dec = dec.output_shape[1]
         self.latent_size = latent_size
 
         self.W_enc_to_z_mu = self.add_param(W, (self.num_hid_enc, latent_size))

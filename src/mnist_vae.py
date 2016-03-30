@@ -30,7 +30,7 @@ def main():
     L = 2 # number of latent variables (z)
 
     # Initialize model
-    model = VAE([C,D,D],[H,H],L,trans_func=rectify,bacth_size=M)
+    model = VAE([C,D,D],[H,H],L,trans_func=rectify,batch_size=M)
 
     # Train model
 
