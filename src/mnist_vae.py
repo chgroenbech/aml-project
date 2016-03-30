@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import data
-import numpy
+from vae import VAE
 
 from matplotlib import pyplot as plt
+from lasagne.nonlinearities import rectify
 
 from aux import fig_path, script_directory
 
@@ -26,7 +27,12 @@ def main():
     
     M = 100 # mini-batch size
     H = 200 # number of hidden units
-    
+    L = 2 # number of latent variables (z)
+
+    # Initialize model
+    model = VAE([C,D,D],[H,H],L,trans_func=rectify,bacth_size=M)
+
+    # Train model
 
 if __name__ == '__main__':
     script_directory()
