@@ -52,7 +52,7 @@ class VAE:
         self.x = T.matrix('x')
 
     # Build and train the model
-    def build_model(self, train_x, test_x, valid_x, update, update_args):
+    def build_model(self, X_train, X_test, X_val, update, update_args):
         index = T.iscalar('index')
         batch_slice = slice(index * self.batch_size, (index + 1) * self.batch_size)
 
@@ -61,17 +61,17 @@ class VAE:
         loss_eval = (log_pz + log_px_given_z - log_qz_given_x).sum()
         loss_eval /= self.batch_size
 
-        all_params = get_all_params(self.model)
+        all_params = lasagne.layers.get_all_params(self.model)
         updates = update(-loss_eval, all_params, *update_args)
 
         train_model = theano.function([index], loss_eval, updates=updates,
-                                      givens={self.x: train_x[batch_slice], },)
+                                      givens={self.x: X_train[batch_slice], },)
 
         test_model = theano.function([index], loss_eval,
-                                     givens={self.x: test_x[batch_slice], },)
+                                     givens={self.x: X_test[batch_slice], },)
 
         validate_model = theano.function([index], loss_eval,
-                                         givens={self.x: validation_x[batch_slice], },)
+                                         givens={self.x: X_val[batch_slice], },)
 
         return train_model, test_model, validate_model
 
@@ -97,9 +97,11 @@ class VAELayer(Layer):
                  b=init.Normal(0.01),
                  **kwargs):
         super(VAELayer, self).__init__(incoming, **kwargs)
-        num_batch, n_channels, n_dim1, n_dim2 = self.input_shape
+        # num_batch, n_channels, n_dim1, n_dim2 = self.input_shape
+        num_batch, n_features = self.input_shape
         self.num_batch = num_batch
-        self.n_features = n_channels*n_dim1*n_dim2
+        # self.n_features = n_channels*n_dim1*n_dim2
+        self.n_features = n_features
         self.x_distribution = x_distribution
         self.pz_distribution = pz_distribution
         self.qz_distribution = qz_distribution
@@ -223,13 +225,13 @@ class VAELayer(Layer):
         if self.pz_distribution == 'gaussian':
             log_pz = standard_normal(z)
         elif self.pz_distribution == 'gaussianmarg':
-            log_pz = -0.5 * (T.log(2 * np.pi) + (T.sqr(mu_enc) + T.exp(log_sigma_enc)))
+            log_pz = -0.5 * (T.log(2 * numpy.pi) + (T.sqr(mu_enc) + T.exp(log_sigma_enc)))
 
         # variational approximation distribution q(z|x)
         if self.qz_distribution == 'gaussian':
             log_qz_given_x = normal2(z, mu_enc, log_sigma_enc)
         elif self.qz_distribution == 'gaussianmarg':
-            log_qz_given_x = - 0.5 * (T.log(2 * np.pi) + 1 + log_sigma_enc)
+            log_qz_given_x = - 0.5 * (T.log(2 * numpy.pi) + 1 + log_sigma_enc)
 
         # sum over dim 1 to get shape (,batch_size)
         log_px_given_z = log_px_given_z.sum(axis=1, dtype=theano.config.floatX)  # sum over x

@@ -1,5 +1,7 @@
 import numpy
 
+import theano
+
 import gzip
 
 from aux import data_path
@@ -12,7 +14,7 @@ def load():
             data = numpy.frombuffer(f.read(), numpy.uint8, offset=16)
         # The inputs are vectors now, we reshape them to monochrome 2D images,
         # following the shape convention: (examples, channels, rows, columns)
-        data = data.reshape(-1, 1, 28, 28)
+        data = data.reshape(-1, 28**2)
         # The inputs come as bytes, we convert them to float32 in range [0,1].
         # (Actually to range [0, 255/256], for compatibility to the version
         # provided at http://deeplearning.net/data/mnist/mnist.pkl.gz.)
@@ -34,7 +36,12 @@ def load():
     # We reserve the last 10000 training examples for validation.
     X_train, X_val = X_train[:-10000], X_train[-10000:]
     y_train, y_val = y_train[:-10000], y_train[-10000:]
+    
+    def shared_dataset(x, y, borrow=True):
+        shared_x = theano.shared(numpy.asarray(x, dtype=theano.config.floatX), borrow=borrow)
+        shared_y = theano.shared(numpy.asarray(y, dtype=theano.config.floatX), borrow=borrow)
+        return shared_x, shared_y
 
     # We just return all the arrays in order, as expected in main().
     # (It doesn't matter how we do this as long as we can read them again.)
-    return X_train, y_train, X_val, y_val, X_test, y_test
+    return shared_dataset(X_train, y_train), shared_dataset(X_val, y_val), shared_dataset(X_test, y_test)
