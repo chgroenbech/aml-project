@@ -1,5 +1,7 @@
 import os, sys
 
+from itertools import izip, count
+
 # Plotting
 
 colours = [
@@ -37,8 +39,12 @@ def savepath(path=None):
 
     return format_function
 
-fig_path  = savepath(path='../fig')
+figure_path  = savepath(path='../fig')
 data_path = savepath(path='../data')
+
+# Helper functions
+def enumerate_reversed(a_list, start = -1):
+    return izip(count(len(a_list) + start, -1), reversed(a_list))
 
 # Shell output
 

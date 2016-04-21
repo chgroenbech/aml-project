@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from numpy import sqrt
-from scipy.io import loadmat
+from matplotlib import pyplot
 
-from matplotlib import pyplot as plt
+from scipy.stats import norm
+from scipy.stats import invgauss
 
 from aux import data_path, fig_path, script_directory
 
