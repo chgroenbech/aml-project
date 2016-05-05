@@ -1,0 +1,12 @@
+\chapter{Theory}
+\label{cha:theory}
+
+Based on Kingma's paper on \texttt{Auto-Encoding Variational Bayes} \cite{Kingma2014}, we build a similar model using a per-pixel loss-function based on the marginal log-likelihood of each datapoint, $i$:
+\begin{align}
+	\log p_{\theta}(\vec{x}^{(1)}, ..., \vec{x}^{(N)}) = \sum^N_{i=1} \log \lik{\vec{x}^{(i)}} 
+\end{align}
+where this can be decomposed like for the EM-algorithm and in the same way as Bishop performs variational inference for eq. 10.2 on page 463 in \cite{Bishop2006}:
+\begin{align}
+	\log \lik{\vec{x}^{(i)}} = D_{KL}\left(\enc{\vec{z}}{\vec{x}^{(i)}}||\lik{\vec{z}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}^{(i)}\right)
+\end{align} 
+Here the first term is the Kullback-Leibler divergence and the second the variational lower bound.  
