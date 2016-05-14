@@ -10,19 +10,14 @@ import theano.tensor as T
 from lasagne import init, updates
 
 from lasagne.nonlinearities import identity, sigmoid, rectify, softmax, softplus
-# from theano.tensor.nnet import softplus
 
 from lasagne.layers import (
     InputLayer, DenseLayer,
-    Pool2DLayer, Conv2DLayer,
-    ReshapeLayer, DimshuffleLayer,
-    # BatchNormLayer as normalize,
+    Pool2DLayer, ReshapeLayer, DimshuffleLayer,
     get_output,
     get_all_params
 )
 from parmesan.layers.sample import SimpleSampleLayer, SampleLayer
-from parmesan.layers.normalize import NormalizeLayer as normalize
-from secret_ingredient import Deconv2DLayer
 
 from parmesan.distributions import (
     log_stdnormal, log_normal2, log_bernoulli,
