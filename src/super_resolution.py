@@ -52,13 +52,13 @@ def main():
     w = W / downsampling_factor
     
     hidden_sizes = [200, 200]
-    latent_size = 2
+    latent_size = 10
     batch_size = 100
     
     analytic_kl_term = True
-    learning_rate = 0.0003
+    learning_rate = 0.01 #0.0003
     
-    N_epochs = 20 # 1000
+    N_epochs = 30 # 1000
     
     # shape = [H, W, C]
     shape = [H * W * C]
@@ -128,6 +128,10 @@ def main():
     
     l_dec_x_mu = DenseLayer(l_dec, num_units = H * W * C, nonlinearity = sigmoid, name = 'DEC_X_MU')
     
+    # TRY relu instead of softplus (maybe with more hidden units)
+    # TRY softmax instead of sigmoid
+    # PROBLEM with this is that we have several pixels activated.
+
     ## Get outputs from models
     
     # With noise
@@ -234,6 +238,7 @@ def main():
         numpy.random.shuffle(X_train)
         X_train_shared.set_value(X_train)
         
+        # TODO: Using dynamically changed learning rate
         train_cost = train_epoch(learning_rate)
         test_cost = test_epoch()
         
@@ -275,6 +280,8 @@ def main():
     
     x = X_test_eval[numpy.array(subset)]
     x_LR = get_output(l_enc_HR_downsample, x)
+    #type(x_LR.eval())
+    #print(x_LR.eval()) # Problem? Comes out as fractions and not binary.
     z = get_output(l_z, x_LR).eval()
     x_reconstructed = x_mu_sample.eval({symbolic_z: z})
     
@@ -301,38 +308,68 @@ def main():
     
     # Plot samples from the z distribution
     
-    x = numpy.linspace(0.1,0.9, 20)
-    v = gaussian.ppf(x)
-    z = numpy.zeros((20**2, 2))
-    
-    i = 0
-    for a in v:
-        for b in v:
-            z[i,0] = a
-            z[i,1] = b
-            i += 1
-    z = z.astype('float32')
+    # x = numpy.linspace(0.1,0.9, 20)
+    # # TODO: Ideally sample from the real p(z)
+    # v = gaussian.ppf(x)
+    # z = numpy.zeros((20**2, 2))
 
-    samples = x_mu_sample.eval({symbolic_z: z})
+    # i = 0
+    # for a in v:
+    #     for b in v:
+    #         z[i,0] = a
+    #         z[i,1] = b
+    #         i += 1
+    # z = z.astype('float32')
+
+
+    # samples = x_mu_sample.eval({symbolic_z: z})
     
-    idx = 0
-    canvas = numpy.zeros((H * 20, 20 * W))
-    for i in range(20):
-        for j in range(20):
-            canvas[i*H: (i + 1) * H, j * W: (j + 1) * W] = samples[idx].reshape((H, W))
-            idx += 1
+    # idx = 0
+    # canvas = numpy.zeros((H * 20, 20 * W))
+    # for i in range(20):
+    #     for j in range(20):
+    #         canvas[i*H: (i + 1) * H, j * W: (j + 1) * W] = samples[idx].reshape((H, W))
+    #         idx += 1
     
-    figure = pyplot.figure()
-    axis = figure.add_subplot(1, 1, 1)
+    # figure = pyplot.figure()
+    # axis = figure.add_subplot(1, 1, 1)
     
-    pyplot.imshow(canvas, cmap = "binary")
+    # pyplot.imshow(canvas, cmap = "binary")
     
-    pyplot.title('MNIST handwritten digits')
-    axis.set_xticks(numpy.array([]))
-    axis.set_yticks(numpy.array([]))
+    # pyplot.title('MNIST handwritten digits')
+    # axis.set_xticks(numpy.array([]))
+    # axis.set_yticks(numpy.array([]))
     
-    pyplot.savefig(figure_path("Distribution" + kind + ".pdf"))
+    # pyplot.savefig(figure_path("Distribution" + kind + ".pdf"))
     
+    for i in range(1,5):
+        X_LR_HM = numpy.loadtxt("../data/hm_7_{}.txt".format(i)).reshape(-1, h**2)
+        # X_LR_HM = theano.shared(X_HM_1, borrow = True)
+        # print(X_LR_HM.shape)
+        # print(X_LR_HM)
+        z = get_output(l_z, X_LR_HM).eval()
+        X_HM_reconstructed = x_mu_sample.eval({symbolic_z: z})[0]
+        image = X_HM_reconstructed.reshape((H, W))
+        figure = pyplot.figure()
+        axis = figure.add_subplot(1, 1, 1)
+        
+        axis.imshow(image, cmap = 'gray')
+        
+        axis.set_xticks(numpy.array([]))
+        axis.set_yticks(numpy.array([]))
+        
+        pyplot.savefig(figure_path("Homemade \#{} (reconstructed) ".format(i) + kind + ".pdf"))
+
+        figure = pyplot.figure()
+        axis = figure.add_subplot(1, 1, 1)
+        
+        axis.imshow(X_LR_HM[0].reshape((h, w)), cmap = 'gray')
+        
+        axis.set_xticks(numpy.array([]))
+        axis.set_yticks(numpy.array([]))
+        
+        pyplot.savefig(figure_path("Homemade \#{} ".format(i) + kind + ".pdf"))
+
 
 if __name__ == '__main__':
     script_directory()
