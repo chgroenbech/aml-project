@@ -1,26 +1,43 @@
-%!TEX root = protokoll.tex
 \section{Method}
 \label{sec:method}
+We consider the MNIST dataset, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. images of handwritten digits. \dots
 
-Based on Kingma's paper on \texttt{Auto-Encoding Variational Bayes} \cite{Kingma2014}, we build a similar model using a per-pixel loss-function based on the marginal log-likelihood of each datapoint, $i$:
+For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution.\dots 
+%TODO: Skriv mere beskrivelse af modellen og indsæt diagram
+
+\\ Using mean-field variational Bayes \cite{Kingma2014}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to  the process  .  based on a per-pixel loss-function  marginal log-likelihood of each datapoint, $i$:
 \begin{equation}
-	\log \dec{\vec{x}\order{1}, ..., \vec{x}\order{N}} = \sum^N_{i=1} \log \enc{\vec{x}\order{i}} 
+	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \enc{\vec{X}\order{i}} 
 \end{equation}
-where this can be decomposed like for the EM-algorithm and in the same way as Bishop performs variational inference for eq. 10.2 on page 463 in \cite{Bishop2006}:
+From now on we denote $\vec{X}\order{i} = \vec{x}$ for shorter and uncluttered notation.
+The marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
 \begin{equation}
-	\log \dec{\vec{x}\order{i}} = D_{KL}\left( \enc{\vec{z}|\vec{x}\order{i}}||\dec{\vec{z}|\vec{x}\order{i}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\order{i}\right)
+	\log \dec{\vec{X}\order{i}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
 \end{equation} 
 Here the first term is the Kullback-Leibler divergence, which is a non-negative entropy measure of how much the 2 distributions differ.
 \begin{equation}
-	D_{KL} = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
+	D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
 \end{equation}
 
 Since the KL-divergence is non-negative the second term (``free energy'') works as a variational lower bound and follows the inequality:
-\begin{align}
-	\log \dec{\vec{x}\order{i}} \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\order{i}\right) = \int \enc{\vec{z}|\vec{x}\order{i}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}\order{i}} } } \D{\vec{z}} = \E_{\enc{\vec{z}|\vec{x}}} [- \log \enc{\vec{z}|\vec{x}}] 	
-\end{align} 
-Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}$. When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$
+
+\begin{gather}
+	\begin{split}
+		\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
+		\\ & =
+		\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\ 
+		& = \E_{\enc{\vec{z}|\vec{x}}} \brackets{- \log \enc{\vec{z}|\vec{x}} + \log \dec{\vec{x},\vec{z}} } 
+		\\
+		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } 
+		\\ 
+		& \quad+ \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }   	
+	\end{split} 
+\end{gather}
+
+Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the . When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$
 
 Differentiation of L
 Reparameretization trick
 Output parameters (mu and sigma)
+
+
