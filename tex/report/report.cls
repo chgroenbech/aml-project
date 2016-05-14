@@ -34,7 +34,7 @@
 
 % Load packages for scientific articles
 \usepackage{siunitx}					% SI units
-\usepackage[square]{natbib}	% Natural science references
+\usepackage[square, numbers]{natbib}	% Natural science references
 \bibliographystyle{ieeetr}
 
 % Load miscellaneous packgaes
@@ -46,6 +46,7 @@
 \usepackage{flafter}
 \usepackage{grffile}
 \usepackage{keyval}
+\usepackage{balance}					% Balance text columns
 
 % Load cross reference packages
 \usepackage{hyperref}					% PDF links for cross-references, citations, etc.
@@ -72,7 +73,9 @@
 \setmarginnotes{0pt}{0pt}{\onelineskip}
 \setheadfoot{\onelineskip}{2\onelineskip}
 \setheaderspaces{*}{2\onelineskip}{*}
+\setcolsepandrule{2em}{0pt}
 \checkandfixthelayout
+\flushbottom
 
 % Title
 \setlength{\droptitle}{-\onelineskip}
@@ -188,6 +191,7 @@
 		\prebibhook
 	}
 }
+\renewcommand{\postbibhook}{\balance}
 
 % Text formatting
 \newcommand{\newterm}[1]{\textbf{#1}}
