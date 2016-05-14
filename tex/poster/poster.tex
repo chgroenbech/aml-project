@@ -1,11 +1,11 @@
-\documentclass[british]{report}
+\documentclass[british]{poster}
 \graphicspath{{../../fig/}}
 
 % Metadata
 \course{\#02460: Advanced Machine Learning}
 \title{Super-Resolution Using Variational Auto-Encoding}
 \author{Christopher Heje Grønbech and Maximillian Fornitz Vording}
-\date{\printdate{2016-05-26}}
+\date{}
 \affiliation{DTU Compute, Technical University of Denmark}
 
 % Special commands for this document
@@ -25,22 +25,24 @@
 	
 	\mainmatter
 	
-	\maketitle
+	\input{title}
 	
-	\input{abstract}
-	
-	\input{../introduction}
-	
-	\input{method}
-	
-	\input{results}
-	
-	\input{discussion}
-	
-	\input{conclusion}
-	
-	\input{../acknowledgements}
-	
-	\bibliography{../references}
+	\begin{multicols}{3}
+		
+		\input{../introduction}
+		
+		\input{method}
+		
+		\input{results}
+		
+		\input{discussion}
+		
+		\input{conclusion}
+		
+		\input{../acknowledgements}
+		
+		\bibliography{../references}
+		
+	\end{multicols}
 	
 \end{document}
