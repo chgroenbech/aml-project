@@ -1,0 +1,48 @@
+\documentclass[british]{report}
+% \graphicspath{{../../fig/}}
+
+% Metadata
+\course{\#02460: Advanced Machine Learning}
+\title{Super-Resolution Using Variational Auto-Encoding}
+\author{Christopher Heje Grønbech and Maximillian Fornitz Vording}
+\date{\printdate{2016-05-26}}
+\affiliation{DTU Compute}
+
+% Special commands for this document
+\newcommand{\Python}{\programminglanguage{Python}\xspace}
+\newcommand{\NumPy}{\library{NumPy}\xspace}
+\newcommand{\SciPy}{\library{SciPy}\xspace}
+\newcommand{\matplotlib}{\library{matplotlib}\xspace}
+
+% Probabilities
+%\newcommand{\lik}[1]{p_{\theta}\left(#1\right)}
+\newcommand{\enc}[1]{q_{\phi}\left(#1\right)}
+\newcommand{\dec}[1]{p_{\theta}\left(#1\right)}
+
+% \sloppybottom
+
+\usepackage{lipsum}
+
+\begin{document}
+	
+	\mainmatter
+	
+	\maketitle
+	
+	\input{abstract}
+	
+	\input{../introduction}
+	
+	\input{method}
+	
+	\input{results}
+	
+	\input{discussion}
+	
+	\input{conclusion}
+	
+	\input{../acknowledgements}
+	
+	\bibliography{../references}
+	
+\end{document}
