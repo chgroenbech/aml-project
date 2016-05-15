@@ -47,6 +47,7 @@
 \usepackage{grffile}
 \usepackage{keyval}
 \usepackage{multicol}
+% \usepackage{balance}
 
 % Load cross reference packages
 \usepackage{hyperref}					% PDF links for cross-references, citations, etc.
@@ -71,6 +72,7 @@
 \setlrmargins{*}{*}{1}
 \setmarginnotes{0pt}{0pt}{\onelineskip}
 \setcolsepandrule{3em}{1pt}
+\setheadfoot{0pt}{0pt}
 \checkandfixthelayout
 \flushbottom
 
@@ -114,6 +116,7 @@
 
 % Page style
 \pagestyle{empty}
+\aliaspagestyle{title}{empty}
 
 % Document division
 \setsecnumdepth{chapter}
@@ -159,7 +162,7 @@
 		\prebibhook
 	}
 }
-\renewcommand{\postbibhook}{\balance}
+% \renewcommand{\postbibhook}{\balance}
 
 % Text formatting
 \newcommand{\newterm}[1]{\textbf{#1}}
