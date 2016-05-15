@@ -47,6 +47,7 @@
 \usepackage{grffile}
 \usepackage{keyval}
 \usepackage{balance}					% Balance text columns
+\usepackage{tikz}
 
 % Load cross reference packages
 \usepackage{hyperref}					% PDF links for cross-references, citations, etc.
