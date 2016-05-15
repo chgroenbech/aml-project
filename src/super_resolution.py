@@ -24,11 +24,11 @@ from parmesan.distributions import (
     kl_normal2_stdnormal
 )
 
+from scipy.stats import norm as gaussian
+
 import time
 
-from matplotlib import pyplot
-
-from scipy.stats import norm as gaussian
+import pickle
 
 from aux import data_path, figure_path, script_directory, enumerate_reversed
 
@@ -47,15 +47,14 @@ def main():
     w = W / downsampling_factor
     
     hidden_sizes = [200, 200]
-    latent_size = 10
+    latent_size = 2
     batch_size = 100
     
     analytic_kl_term = True
     learning_rate = 0.01 #0.0003
     
-    N_epochs = 30 # 1000
+    N_epochs = 20 # 1000
     
-    # shape = [H, W, C]
     shape = [H * W * C]
     
     # Symbolic variables
@@ -95,7 +94,7 @@ def main():
     l_enc_HR_downsample = l_enc_HR_in
     
     l_enc_HR_downsample = ReshapeLayer(l_enc_HR_downsample, (-1, C, H, W))
-    if downsampling_factor == 1:
+    if downsampling_factor != 1:
         l_enc_HR_downsample = Pool2DLayer(l_enc_HR_downsample, pool_size = downsampling_factor, mode = "average_exc_pad")
     l_enc_HR_downsample = ReshapeLayer(l_enc_HR_downsample, (-1, h * w * C))
     
@@ -248,10 +247,102 @@ def main():
         print("Epoch {:d} (duration: {:.2f} s, learning rate: {:.1e}):".format(epoch + 1, duration, learning_rate))
         print("    log-likelihood: {:.3f} (training set), {:.3f} (test set)".format(train_cost, test_cost))
     
-    # N_epochs, latent_size
-    # epochs, cost_train, cost_test
-    # X_test_shared, l_enc_HR_downsample, l_z, x_mu_sample
-
+    
+    # Results
+    
+    ## Reconstruction
+    
+    N_reconstructions = 50
+    
+    X_test_eval = X_test_shared.eval()
+    subset = numpy.random.randint(0, len(X_test_eval), size = N_reconstructions)
+    
+    x_original = X_test_eval[numpy.array(subset)]
+    x_LR = get_output(l_enc_HR_downsample, x_original)
+    z = get_output(l_z, x_LR).eval()
+    x_reconstructed = x_mu_sample.eval({symbolic_z: z})
+    
+    reconstructions = {
+        "originals": x_original,
+        "reconstructions": x_reconstructed
+    }
+    
+    ## Manifold
+    
+    if latent_size == 2:
+        
+        x = numpy.linspace(0.1, 0.9, 20)
+        # TODO: Ideally sample from the real p(z)
+        v = gaussian.ppf(x)
+        z = numpy.zeros((20**2, 2))
+        
+        i = 0
+        for a in v:
+            for b in v:
+                z[i,0] = a
+                z[i,1] = b
+                i += 1
+        z = z.astype('float32')
+        
+        samples = x_mu_sample.eval({symbolic_z: z})
+    
+    else:
+        samples = None
+    
+    ## Reconstructions of homemade numbers
+    
+    if downsampling_factor == 2:
+        
+        N_homemade = 4
+    
+        x_LR_HM = numpy.zeros((N_homemade, h * w))
+    
+        for i in range(N_homemade):
+            x_LR_HM_example = numpy.loadtxt(data_path("hm_7_{}.txt").format(i)).reshape(h * w)
+            x_LR_HM[i, :] = x_LR_HM_example
+    
+        z = get_output(l_z, x_LR_HM).eval()
+        x_HM_reconstructed = x_mu_sample.eval({symbolic_z: z})
+    
+        reconstructions_homemade = {
+            "originals": x_LR_HM,
+            "reconstructions": x_HM_reconstructed
+        }
+    
+    else:
+        reconstructions_homemade = None
+    
+    # Saving
+    
+    setup_and_results = {
+        "setup": {
+            "image size": (C, H, W),
+            "downsampling factor": downsampling_factor,
+            "learning rate": learning_rate,
+            "analytic K-L term": analytic_kl_term,
+            "batch size": batch_size,
+            "hidden layer sizes": hidden_sizes,
+            "latent size": latent_size,
+            "number of epochs": N_epochs
+        },
+        "results": {
+            "learning curve": {
+                "epochs": epochs,
+                "training cost function": cost_train,
+                "test cost function": cost_test
+            },
+            "reconstructions": reconstructions,
+            "manifold": {
+                "samples": samples
+            },
+            "reconstructed homemade numbers": reconstructions_homemade
+        }
+    }
+    
+    file_name = "results_ds{}_l{}_e{}.pkl".format(downsampling_factor, latent_size, N_epochs)
+    
+    with open(data_path(file_name), "w") as f:
+        pickle.dump(setup_and_results, f)
 
 if __name__ == '__main__':
     script_directory()

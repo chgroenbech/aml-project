@@ -66,3 +66,20 @@ def title(string):
 def subtitle(string):
     """Display a coloured subtitle."""
     print("{}\n{}\n".format(bold(string), underline(string, "-")))
+
+if __name__ == '__main__':
+    script_directory()
+    import numpy
+    
+    h = 14
+    w = 14
+    
+    N_homemade = 4
+    
+    x_LR_HM = numpy.zeros((N_homemade, h * w))
+    
+    for i in range(N_homemade):
+        x_LR_HM_example = numpy.loadtxt(data_path("hm_7_{}.txt").format(i)).reshape(h * w)
+        x_LR_HM[i, :] = x_LR_HM_example
+    
+    print(x_LR_HM.shape)
