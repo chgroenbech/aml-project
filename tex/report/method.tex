@@ -1,6 +1,5 @@
 \section{Method}
-\label{sec:method}s
-
+\label{sec:method}
 
 We consider the MNIST dataset \cite{MNIST}, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. images of handwritten digits. \dots
 
@@ -10,7 +9,7 @@ For the reconstruction of high-resolution (HR) digits from low-resolution (LR) d
 Using mean-field variational Bayes \cite{Kingma2013}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to redo the probabilistic process of producing a digit pixel for pixel. \\  
 The model is trained based on a per-pixel loss-function derived from the marginal log-likelihood of each datapoint, $i$:
 \begin{equation}
-	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \enc{\vec{X}\order{i}} 
+	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}} 
 \end{equation}
 From now on we denote $\vec{X}\order{i} = \vec{x}$ for shorter and uncluttered notation.
 The marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:

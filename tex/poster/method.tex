@@ -1,6 +1,89 @@
 \section{Method}
 \label{sec:method}
 
+\subsection{Data} % (fold)
+\label{sub:data}
+\begin{itemize}
+	\item \textbf{MNIST dataset} \cite{MNIST}, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. handwritten digits images with:
+	\begin{itemize}
+		\item \textbf{Training set} combining validation and training in 60000 images 
+		\item \textbf{Test set} of 10000 images.
+		\item Denotion of $\vec{X}\order{i} = \vec{x}$ for simplicity. 
+	\end{itemize}
+	\item \textbf{Reconstruction} $\tilde{\vec{X}}_{HR}$ of 
+	\begin{itemize}
+		\item $\vec{X}_{HR}: 28\times 28$ high-resolution (HR) images from
+		\item $\vec{X}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
+	\end{itemize} 
+\end{itemize}
+% subsection data (end)
+
+\subsection{Model} % (fold)
+\label{sub:the_model}
+
+%TODO: Tilføj diagram
+% \begin{figure}
+% 	\centering
+	\input{model.tex}
+% 	\caption{Diagram of model.} 
+% 	\label{fig:diagram}
+% \end{figure}
+
+\subsubsection{Downsampling} % (fold)
+\label{ssub:downsampling}
+\begin{itemize}
+	\item \textbf{Mean pooling layer}
+\end{itemize}
+% subsubsection downsampling (end)
+
+\subsubsection{Variational auto-encoder} % (fold)
+\label{ssub:variational_auto_encoder}
+\begin{itemize}
+	\item \textbf{Goal}: Infer same structure from LR to HR. 
+	\item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
+	\begin{itemize}
+		\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}$ - Generate image from conditional distribution given
+		\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}$ - Unobserved latent variable generated from the varitional approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$
+	\end{itemize}
+	\item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
+	\begin{itemize}
+		\item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
+		\item $\max_{\curlies{\vec{\theta},\vec{\phi}}}\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$: maximize `Free Energy' as a variational lower bound.
+		\item Derived from mean-field variational Bayes where the marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
+		\begin{equation}
+			\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
+		\end{equation} 
+		\item \textbf{Variational lower bound}: non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
+			\begin{gather}
+				\begin{split}
+					\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right) =
+					\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\
+					& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }
+				\end{split}
+			\end{gather}
+		\item First term: Regularizing $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. Has a differentiable analytical solution.
+		\item Second term: Reconstruction error. Has a differentiable Monte Carlo estimate:
+		\begin{equation}
+			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}
+		\end{equation}
+		\item where a reparameterization trick is used for sampling $\vec{z}\order{l}= \vec{\mu} + \vec{\sigma} \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$
+	\end{itemize}
+	\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
+\end{itemize}
+% subsubsection variational_auto_encoder (end)
+
+% subsection the_model (end)
+
+\subsection{Reparameretization trick} % (fold)
+\label{sub:reparameretization_trick}
+
+% subsection reparameretization_trick (end)
+
+\subsection{Layers of neural networks} % (fold)
+\label{sub:layers_of_neural_networks}
+
+% subsection layers_of_neural_networks (end)
+
 
 * Collection of data:
 	* MNIST data
@@ -19,75 +102,5 @@
 	* Super-resolution of home-made numbers
 
 
-\subsection{Data} % (fold)
-\label{sub:data}
-\begin{itemize}
-	\item MNIST dataset \cite{MNIST}, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. images of handwritten digits. 
-	\item From downsampled low resolution images (LR) $\vec{X}_{LR}$ to high resolution images (HR) $\vec{X}_{LR}$. 
-\end{itemize}
-% subsection data (end)
-
-\subsection{The Model: Variational Auto-Encoder} % (fold)
-\label{sub:the_model}
-%TODO: Tilføj diagram
-
-\begin{itemize}
-	\item \textbf{Goal}: Infer same structure from LR to HR. 
-	\item \textbf{Solution}: Model assume the same underlying probabilistic data generating process behind the production of LR and HR digits.
-	\item \textbf{Variational Auto-Encoder}: $\vec{X}_HR$ $\rightarrow$ Downsample, $\vec{X}_LR$ $\rightarrow$  Encoder, $\enc{\vec{z}|\vec{x}}$ $\rightarrow$ latent space, $\vec{z}$ $\rightarrow$ Decoder, $\dec{\vec{x}|\vec{z}}$ $\rightarrow$ Reconstruction, $\tilde{\vec{X}}_HR$
-	\item \textbf{Loss-function}: Maximize variational lower bound, $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ derived from the mean-field variational Bayes where the marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
-	\begin{equation}
-		\log \dec{\vec{X}\order{i}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
-	\end{equation} 
-	where the non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
-	\begin{gather}
-	\begin{split}
-		\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
-		\\ & =
-		\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\ 
-		& = \E_{\enc{\vec{z}|\vec{x}}} \brackets{- \log \enc{\vec{z}|\vec{x}} + \log \dec{\vec{x},\vec{z}} } 
-		\\
-		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } 
-		\\ 
-		& \quad+ \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }   	
-	\end{split} 
-\end{gather}
-\end{itemize}
-
-% subsection the_model (end)
-For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution.\dots 
-%TODO: Skriv mere beskrivelse af modellen og indsæt model diagram
-Using mean-field variational Bayes \cite{Kingma2014}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to  the process  .  based on a per-pixel loss-function  marginal log-likelihood of each datapoint, $i$:
-\begin{equation}
-	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \enc{\vec{X}\order{i}} 
-\end{equation}
-From now on we denote $\vec{X}\order{i} = \vec{x}$ for shorter and uncluttered notation.
-The marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
-\begin{equation}
-	\log \dec{\vec{X}\order{i}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
-\end{equation} 
-Here the first term is the Kullback-Leibler divergence, which is a non-negative entropy measure of how much the 2 distributions differ.
-\begin{equation}
-	D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
-\end{equation}
-
-Since the KL-divergence is non-negative the second term (``free energy'') works as a variational lower bound and follows the inequality:
-
-\begin{gather}
-	\begin{split}
-		\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
-		\\ & =
-		\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\ 
-		& = \E_{\enc{\vec{z}|\vec{x}}} \brackets{- \log \enc{\vec{z}|\vec{x}} + \log \dec{\vec{x},\vec{z}} } 
-		\\
-		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } 
-		\\ 
-		& \quad+ \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }   	
-	\end{split} 
-\end{gather}
-
-Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the . When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$
-
 Differentiation of L
-Reparameretization trick
 Output parameters (mu and sigma)

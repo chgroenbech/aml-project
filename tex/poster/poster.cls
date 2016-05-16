@@ -47,6 +47,7 @@
 \usepackage{grffile}
 \usepackage{keyval}
 \usepackage{multicol}
+\usepackage{tikz}
 % \usepackage{balance}
 
 % Load cross reference packages
