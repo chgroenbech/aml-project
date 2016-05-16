@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{report}[2016/05/14 v0.1 Report class]
+\ProvidesClass{poster}[2016/05/14 v0.1 Report class]
 
 \usepackage{xifthen}					% Implements if clauses
 
