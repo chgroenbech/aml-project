@@ -14,4 +14,9 @@
 		* Questions
 		* Problems investigated
 
-Super-resolution  
+The use for Super-resolution imaging are vast and important for presenting high quality content fast in modern digital medias with compression schemes due to restricted bandwidth in f.ex. online streaming services. Traditional techniques infer information from patches within the image or between frames to lower the entropy and signal-to-noise ratio.
+% TODO: List more trad, techniques
+	Inference tasks like these require learning a prior over the structure in images and as Kingma et. al \cite{Kingma2013} suggests, Variational auto-encoders could be highly applicaple for this together with image denoising and inpainting.
+ Building a model variational auto-encoder model, which can infer structure in high resolution images from low resolution images just from reconstructing the underlying process is therefore of great interest.  
+
+Customers = e.g. Netflix --> Super fast streaming by low res. transfer and high res. translation (decoding) on local unit. 
