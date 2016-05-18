@@ -38,10 +38,11 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [2, 5, 10, 30]
-    # latent_sizes = [2, 10, 30]
+    latent_sizes = [2, 30]
+    # latent_sizes = [2, 5, 10, 30]
     N_epochs = 50
     binarise_downsampling = False
+    bernoulli_sampling = True
     
     N_reconstructions_max = 6
     
@@ -60,7 +61,7 @@ def main():
             
             # Data
     
-            specifications = "ds{}{}_l{}_e{}".format(downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
+            specifications = "{}ds{}{}_l{}_e{}".format("b_" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
             file_name = "results_" + specifications + ".pkl"
     
             try:
@@ -96,7 +97,7 @@ def main():
                 cost_test_ds1 = cost_test[-1]
                 cost_train_ds1 = cost_train[-1]
             elif downsampling_factor > 1:
-                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_test[-1], cost_train[-1] - cost_train_ds1, cost_test[-1] - cost_test_ds1)
+                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_train[-1] - cost_train_ds1, cost_test[-1], cost_test[-1] - cost_test_ds1)
                 table.append(table_row)
             
             figure = pyplot.figure()
@@ -257,7 +258,9 @@ def main():
                 print("Reconstructions of homemade numbers saved as {}.".format(plot_name))
             
             print
-            
+        
+        specifications = "{}ds{}_l{}_e{}".format("b_" if bernoulli_sampling else "", "b" if binarise_downsampling else "", latent_size, N_epochs)
+        
         if len(learning_curves) > 1:
             
             figure = pyplot.figure()
@@ -281,7 +284,6 @@ def main():
             axis.set_ylabel("Variational lower bound")
             axis.set_xlabel('Epochs')
         
-            specifications = "ds{}_l{}_e{}".format("b" if binarise_downsampling else "", latent_size, N_epochs)
             plot_name = figure_path("learning_curves_" + specifications + ".pdf")
             pyplot.savefig(plot_name, bbox_inches='tight')
             print("Learning curves for different downsampling factors saved as {}.".format(plot_name))

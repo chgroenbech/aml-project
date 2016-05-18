@@ -39,11 +39,12 @@ def main():
     
     # Main setup
     
-    latent_sizes = [5]
+    latent_sizes = [2, 5, 10, 50, 100]
     # latent_sizes = [2, 5, 10, 30, 50, 100]
     downsampling_factors = [1, 2, 4]
     N_epochs = 50
     binarise_downsampling = False
+    bernoulli_sampling = True
     
     # Setup
     
@@ -371,7 +372,7 @@ def main():
             }
         }
         
-        file_name = "results_ds{}{}_l{}_e{}.pkl".format(downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
+        file_name = "results{}_ds{}{}_l{}_e{}.pkl".format("_b" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
     
         with open(data_path(file_name), "w") as f:
             pickle.dump(setup_and_results, f)

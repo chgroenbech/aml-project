@@ -18,9 +18,9 @@ def loadMNIST(file_path, shape):
     X_valid, y_valid = validation_set
     X_test, y_test = test_set
     
-    X_train = numpy.around(X_train).reshape(-1, *shape)
-    X_valid = numpy.around(X_valid).reshape(-1, *shape)
-    X_test = numpy.around(X_test).reshape(-1, *shape)
+    X_train = X_train.reshape(-1, *shape)
+    X_valid = X_valid.reshape(-1, *shape)
+    X_test = X_test.reshape(-1, *shape)
     
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
 
@@ -49,3 +49,9 @@ def loadHomemade(file_paths, shape):
 
 if __name__ == '__main__':
     script_directory()
+    
+    from super_resolution import bernoullisample
+    
+    (X_train, y_train), (X_valid, y_valid), (X_test, y_test) = loadMNIST(data_path("mnist.pkl.gz"), [28**2])
+    
+    print((X_train - bernoullisample(X_train)).max())
