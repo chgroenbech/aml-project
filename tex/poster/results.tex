@@ -9,7 +9,7 @@
 
 \begin{columntable}
 	\centering
-	\tabcaption{The variational lower bound after $50$ epochs for both training and test set.}
+	\tabcaption{The variational lower bound after $50$ epochs for both training and test set as well as the difference from the variational lower bound without downsampling, $\mathcal{L}\idx{test}\order{d = 1}$, for the test set.}
 	\setlength{\tabcolsep}{1em}
 	\sisetup{
 		table-number-alignment = center
@@ -33,8 +33,9 @@
 \begin{columnfigure}
 	\centering
 	\includegraphics[width=\linewidth]{reconstructions_set_ds_l30_e50.pdf}
-	\figcaption{\rephrase{Sampled data.}}
+	\figcaption{Sampled numbers from the test set for two downsampling factors (given above the numbers), their downsampled versions as well as upscaled results using \rephrase{a bicubic method} and a varitional auto-encoder method.}
 \end{columnfigure}
 
-\rephrase{Learning rate}
-\rephrase{Hidden size}
+% TODO: Learning rate
+% TODO: Hidden size
+% TODO: Bernoulli sampling

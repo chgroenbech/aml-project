@@ -339,15 +339,15 @@ def main():
             axis.imshow(image, cmap = 'binary')
             
             row_alignment = {"horizontalalignment": "right", "verticalalignment": "center"}
-            column_alignment = {"horizontalalignment": "center", "verticalalignment": "baseline"}
+            column_alignment = {"horizontalalignment": "center", "verticalalignment": "baseline", "size": "large"}
             
             axis.text(-5, 0.5 * H, "Originals", fontdict = row_alignment)
             axis.text(-5, 1.5 * H, "Downsampled", fontdict = row_alignment)
-            axis.text(-5, 2.5 * H, "Bicubic", fontdict = row_alignment)
-            axis.text(-5, 3.5 * H, "VAE", fontdict = row_alignment)
+            axis.text(-5, 2.5 * H, "Upscaled\nBicubic", fontdict = row_alignment)
+            axis.text(-5, 3.5 * H, "Upscaled\nVAE", fontdict = row_alignment)
             
             for k, reconstructions in enumerate(reconstructions_set):
-                axis.text(W * N_reconstructions / 2 + (W * N_reconstructions + space) * k, -5, "${}\\times$".format(reconstructions["downsampling factor"]), fontdict = column_alignment)
+                axis.text(W * N_reconstructions / 2 + (W * N_reconstructions + space) * k, -5, "$\\times 1/{}$".format(reconstructions["downsampling factor"]), fontdict = column_alignment)
             
             axis.set_xticks(numpy.array([]))
             axis.set_yticks(numpy.array([]))

@@ -173,6 +173,7 @@
 		\prebibhook
 	}
 }
+\renewcommand{\prebibhook}{\small}
 % \renewcommand{\postbibhook}{\balance}
 
 % Text formatting
