@@ -48,6 +48,7 @@
 \usepackage{keyval}
 \usepackage{multicol}
 \usepackage{tikz}
+\usepackage{enumitem}
 % \usepackage{balance}
 
 % Load cross reference packages
@@ -145,6 +146,9 @@
 	{\par\medskip\noindent\minipage{\linewidth}}
 	{\endminipage\par\medskip}
 \newfixedcaption{\tabcaption}{table}
+
+% Lists
+% \setlist[itemize]{leftmargin=!,labelindent=}
 \tightlists
 % \firmlists
 

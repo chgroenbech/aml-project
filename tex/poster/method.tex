@@ -1,49 +1,49 @@
-\section{Method}
+\section{Materials and methods}
 \label{sec:method}
 
-\subsection{Data} % (fold)
+\subsection{Data}
 \label{sub:data}
 \begin{itemize}
-	\item \textbf{MNIST dataset} \cite{MNIST}, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. handwritten digits images with:
+	\item \textbf{MNIST dataset} \cite{MNIST}: i.i.d. images, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, of handwritten digits:
 	\begin{itemize}
-		\item \textbf{Training set} combining validation and training in 60000 images 
+		\item \textbf{Training set} (including validation set) of 60000 images.
 		\item \textbf{Test set} of 10000 images.
-		\item Denotion of $\vec{X}\order{i} = \vec{x}$ for simplicity. 
 	\end{itemize}
-	\item \textbf{Reconstruction} $\tilde{\vec{X}}_{HR}$ of 
-	\begin{itemize}
-		\item $\vec{X}_{HR}: 28\times 28$ high-resolution (HR) images from
-		\item $\vec{X}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
-	\end{itemize} 
+	\item $\vec{x} = \vec{X}\order{i}$ for simplicity.
 \end{itemize}
-% subsection data (end)
 
 \subsection{Model} % (fold)
 \label{sub:the_model}
 
-%TODO: Tilføj diagram
-% \begin{figure}
-% 	\centering
+\begin{columnfigure}
+	\centering
 	\input{model.tex}
-% 	\caption{Diagram of model.} 
-% 	\label{fig:diagram}
-% \end{figure}
+	\figcaption{Diagram of model.}
+	\label{fig:diagram}
+\end{columnfigure}
 
-\subsubsection{Downsampling} % (fold)
+\begin{itemize}
+	
+	\item $\tilde{\vec{x}}_{HR}$: reconstructions of
+	\item $\vec{x}_{HR}: 28\times 28$ high-resolution (HR) images from
+	\item $\vec{x}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
+\end{itemize}
+
+
+\subsubsection{Downsampling}
 \label{ssub:downsampling}
 \begin{itemize}
-	\item \textbf{Mean pooling layer}
+	\item HR images was downsampled by using a \textbf{mean pooling layer}.
 \end{itemize}
-% subsubsection downsampling (end)
 
-\subsubsection{Variational auto-encoder} % (fold)
+\subsubsection{Variational auto-encoder}
 \label{ssub:variational_auto_encoder}
 \begin{itemize}
 	% \item \textbf{Goal}: Infer same structure from LR to HR. 
 	% \item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
-	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ - Generate image from conditional Bernoulli distribution given
-	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$
-	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$, $\vec{\sigma}^2_\phi(\vec{x})$ and $\vec{\mu}_\theta(\vec{z})$
+	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given
+	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
+	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\vec{z}$ and $\vec{\mu}_\theta(\vec{z})$ for $\vec{x}$.
 	% \item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
 		% \item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
 		% \item $\max_{\curlies{\vec{\theta},\vec{\phi}}}\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$: maximize `Free Energy' as a variational lower bound.
@@ -51,56 +51,42 @@
 		% \begin{equation}
 		% 	\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
 		% \end{equation} 
-	\item \textbf{Variational lower bound}: Training criterion 
+	\item \textbf{Variational lower bound}: Cost function: 
 	%non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
-		\begin{gather}
+		\begin{gather*}
 			\begin{split}
 				\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right) =
 				\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\
-				& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }
+				& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets*{\log \dec{\vec{x}|\vec{z}}} .
 			\end{split}
-		\end{gather}
+		\end{gather*}
 	\begin{itemize}
-		\item \textbf{1. term: Regularization} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. Has a differentiable analytical solution.
-		\item \textbf{2. term: Reconstruction error} Has a differentiable Monte Carlo estimate:
-		\begin{equation}
-			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}
-		\end{equation}
-		\item \textbf{A Reparameterization trick} is here used for sampling $\vec{z}\order{l}= \vec{\mu} + \vec{\sigma} \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$
+		\item \textbf{First term} is the \textbf{regularisation} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. It has a differentiable analytical solution.
+		\item \textbf{Second term} is the \textbf{reconstruction error}. This has a differentiable Monte Carlo estimate:
+		\begin{equation*}
+			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
+		\end{equation*}
+		\item A \textbf{reparameterization trick} is used here for sampling $\vec{z}\order{l}= \vec{\mu} + \vec{\sigma} \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$.
 		\end{itemize}
 	
 	%\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
 \end{itemize}
-% subsubsection variational_auto_encoder (end)
 
-% \subsubsection{Neural Networks} % (fold)
+% \subsubsection{Neural Networks}
 % \label{subsub:neural_networks}
 % \begin{itemize}
 % 	\item Fully connected NN
 % 	\item Convolutional NN 
 % \end{itemize}
-% subsubsection neural_networks (end)
-
-
-% subsection the_model (end)
-
-
-% * Collection of data:
-% 	* MNIST data
-% * Methods (described to a level that others can reproduce the results):
-% 	* Diagram (denote stochastic layers)
-% 	* Downsampling (average pool layer)
-% 	* VAE
-% 		* Auto-encoder
-% 		* Variational bound
-% 	* Fully-connected neural network (NN)
-% 	* Convolutional neural network (CNN) (*maybe*)
-% * Experiments:
-% 	* Reconstruction varying
-% 		* downsampling factor
-% 		* number of latent size
-% 	* Super-resolution of home-made numbers
 
 
 % Differentiation of L
 % Output parameters (mu and sigma)
+
+\subsection{Experiments}
+\label{sub:experiments}
+
+\begin{itemize}
+	\item Reconstruct HR images using the VAE with two fully-connected neural network with $200$ hidden neurons each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
+	\item Compare reconstructions using VAE with a bicubic interpoltation upscaling.
+\end{itemize}
