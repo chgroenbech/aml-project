@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{poster}[2016/05/14 v0.1 Report class]
+\ProvidesClass{poster}[2016/05/14 v0.1 Poster class]
 
 \usepackage{xifthen}					% Implements if clauses
 
@@ -148,7 +148,7 @@
 \newfixedcaption{\tabcaption}{table}
 
 % Lists
-% \setlist[itemize]{leftmargin=!,labelindent=}
+\setlist[itemize]{leftmargin=*}
 \tightlists
 % \firmlists
 
