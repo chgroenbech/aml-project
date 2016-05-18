@@ -61,7 +61,7 @@ def main():
     latent_size = 2
     
     # Convolutional layers
-    filters = [{"number": 30, "size": 3, "stride": 1}]
+    filters = [{"number": 16, "size": 3, "stride": 1}]
     
     batch_size = 100
     
@@ -84,7 +84,7 @@ def main():
     file_name = "mnist.pkl.gz"
     file_path = data_path(file_name)
     
-    (X_train, y_train), (X_valid, y_valid), (X_test, y_test) = data.load(file_path, shape)
+    (X_train, y_train), (X_valid, y_valid), (X_test, y_test) = data.loadMNIST(file_path, shape)
     
     X_train = numpy.concatenate([X_train, X_valid])
     
@@ -102,6 +102,8 @@ def main():
     
     ## Recognition model q(z|x)
     
+    pool_size = 2
+    
     l_enc_HR_in = InputLayer((None, C * H * W), name = "ENC_HR_INPUT")
     
     l_enc_HR_downsample = l_enc_HR_in
@@ -117,6 +119,7 @@ def main():
     l_enc = ReshapeLayer(l_enc, (-1, C, h, w))
     for i, filter_ in enumerate(filters):
         l_enc = Conv2DLayer(l_enc, filter_["number"], filter_["size"], filter_["stride"], pad = "same", nonlinearity = rectify, name = 'ENC_CONV_{:d}'.format(i))
+    # l_enc = Pool2DLayer(l_enc, pool_size)
     
     l_z_mu = DenseLayer(l_enc, num_units = latent_size, nonlinearity = None, name = 'ENC_Z_MU')
     l_z_log_var = DenseLayer(l_enc, num_units = latent_size, nonlinearity = None, name = 'ENC_Z_LOG_VAR')
@@ -135,7 +138,7 @@ def main():
         if filter_["stride"] == 1:
             l_dec = Conv2DLayer(l_dec, filter_["number"], filter_["size"], filter_["stride"], pad = "same", nonlinearity = rectify, name = 'DEC_CONV_{:d}'.format(i))
         else:
-            l_dec = Deconv2DLayer(l_dec, filter_["number"], filter_["size"], filter_["stride"], pad = "same", nonlinearity = rectify, name = 'DEC_CONV_{:d}'.format(i))
+            l_dec = Deconv2DLayer(l_dec, filter_["number"], filter_["size"], filter_["stride"], nonlinearity = rectify, name = 'DEC_CONV_{:d}'.format(i))
     
     l_dec_x_mu = Conv2DLayer(l_dec, num_filters = C, filter_size = (3, 3), stride = 1, pad  = 'same', nonlinearity = None, name = 'DEC_X_MU')
     l_dec_x_mu = ReshapeLayer(l_dec_x_mu, (-1, C * H * W))
@@ -183,7 +186,7 @@ def main():
         z_eval, z_mu_eval, z_log_var_eval, x_mu_eval, symbolic_x_HR, analytic_kl_term)
     
     # Parameters to train
-    parameters = get_all_params([l_dec_x_mu, l_z_mu], trainable = True)
+    parameters = get_all_params([l_z_mu, l_dec_x_mu], trainable = True)
     print("Parameters that will be trained:")
     for parameter in parameters:
         print("{}: {}".format(parameter, parameter.get_value().shape))
@@ -260,88 +263,88 @@ def main():
     
     # Plots
     
-    ## Plotting learning curves
-    
-    figure = pyplot.figure()
-    axis = figure.add_subplot(1, 1, 1)
-    
-    axis.plot(epochs, cost_train, label = 'training data')
-    axis.plot(epochs, cost_test, label = 'testing data')
-    
-    pyplot.legend(loc = "best")
-    
-    axis.set_ylabel("Log Likelihood")
-    axis.set_xlabel('Epochs')
-    
-    pyplot.savefig(figure_path("Learning curve.pdf"))
-
-    # Plotting the reconstructions
-    
-    N_reconstructions = 50
-    
-    X_test_eval = X_test_shared.eval()
-    subset = numpy.random.randint(0, len(X_test_eval), size = N_reconstructions)
-    
-    x = X_test_eval[numpy.array(subset)]
-    x_LR = get_output(l_enc_HR_downsample, x)
-    z = get_output(l_z, x_LR).eval()
-    # x_recon = get_output(l_dec_x_mu, z).eval()
-    x_reconstruced = x_mu_sample.eval({symbolic_z: z})
-    
-    image = numpy.zeros((H * 2, W * len(subset)))
-    
-    for i in range(len(subset)):
-        x_a, x_b = 0 * H, 1 * H
-        x_recon_a, x_recon_b = 1 * H, 2 * H
-        y_a, y_b = i * W, (i + 1) * W
-        image_i = x[i].reshape((H, W))
-        image_i_reconstruced = x_reconstruced[i].reshape((H, W))
-        image[x_a: x_b, y_a: y_b] = image_i
-        image[x_recon_a: x_recon_b, y_a: y_b] = image_i_reconstruced
-    
-    figure = pyplot.figure()
-    axis = figure.add_subplot(1, 1, 1)
-    
-    axis.imshow(image, cmap = 'gray')
-    
-    axis.set_xticks(numpy.array([]))
-    axis.set_yticks(numpy.array([]))
-    
-    pyplot.savefig(figure_path("Reconstructions.pdf"))
-    
-    # Plot samples from the z distribution
-    
-    x = numpy.linspace(0.1,0.9, 20)
-    v = gaussian.ppf(x)
-    z = numpy.zeros((20**2, 2))
-    
-    i = 0
-    for a in v:
-        for b in v:
-            z[i,0] = a
-            z[i,1] = b
-            i += 1
-    z = z.astype('float32')
-
-    samples = x_mu_sample.eval({symbolic_z: z})
-    
-    idx = 0
-    canvas = numpy.zeros((H * 20, 20 * W))
-    for i in range(20):
-        for j in range(20):
-            canvas[i*H: (i + 1) * H, j * W: (j + 1) * W] = samples[idx].reshape((H, W))
-            idx += 1
-    
-    figure = pyplot.figure()
-    axis = figure.add_subplot(1, 1, 1)
-    
-    pyplot.imshow(canvas, cmap = "binary")
-    
-    pyplot.title('MNIST handwritten digits')
-    axis.set_xticks(numpy.array([]))
-    axis.set_yticks(numpy.array([]))
-    
-    pyplot.savefig(figure_path("Distribution.pdf"))
+    # ## Plotting learning curves
+    #
+    # figure = pyplot.figure()
+    # axis = figure.add_subplot(1, 1, 1)
+    #
+    # axis.plot(epochs, cost_train, label = 'training data')
+    # axis.plot(epochs, cost_test, label = 'testing data')
+    #
+    # pyplot.legend(loc = "best")
+    #
+    # axis.set_ylabel("Log Likelihood")
+    # axis.set_xlabel('Epochs')
+    #
+    # pyplot.savefig(figure_path("Learning curve.pdf"))
+    #
+    # # Plotting the reconstructions
+    #
+    # N_reconstructions = 50
+    #
+    # X_test_eval = X_test_shared.eval()
+    # subset = numpy.random.randint(0, len(X_test_eval), size = N_reconstructions)
+    #
+    # x = X_test_eval[numpy.array(subset)]
+    # x_LR = get_output(l_enc_HR_downsample, x)
+    # z = get_output(l_z, x_LR).eval()
+    # # x_recon = get_output(l_dec_x_mu, z).eval()
+    # x_reconstruced = x_mu_sample.eval({symbolic_z: z})
+    #
+    # image = numpy.zeros((H * 2, W * len(subset)))
+    #
+    # for i in range(len(subset)):
+    #     x_a, x_b = 0 * H, 1 * H
+    #     x_recon_a, x_recon_b = 1 * H, 2 * H
+    #     y_a, y_b = i * W, (i + 1) * W
+    #     image_i = x[i].reshape((H, W))
+    #     image_i_reconstruced = x_reconstruced[i].reshape((H, W))
+    #     image[x_a: x_b, y_a: y_b] = image_i
+    #     image[x_recon_a: x_recon_b, y_a: y_b] = image_i_reconstruced
+    #
+    # figure = pyplot.figure()
+    # axis = figure.add_subplot(1, 1, 1)
+    #
+    # axis.imshow(image, cmap = 'gray')
+    #
+    # axis.set_xticks(numpy.array([]))
+    # axis.set_yticks(numpy.array([]))
+    #
+    # pyplot.savefig(figure_path("Reconstructions.pdf"))
+    #
+    # # Plot samples from the z distribution
+    #
+    # x = numpy.linspace(0.1,0.9, 20)
+    # v = gaussian.ppf(x)
+    # z = numpy.zeros((20**2, 2))
+    #
+    # i = 0
+    # for a in v:
+    #     for b in v:
+    #         z[i,0] = a
+    #         z[i,1] = b
+    #         i += 1
+    # z = z.astype('float32')
+    #
+    # samples = x_mu_sample.eval({symbolic_z: z})
+    #
+    # idx = 0
+    # canvas = numpy.zeros((H * 20, 20 * W))
+    # for i in range(20):
+    #     for j in range(20):
+    #         canvas[i*H: (i + 1) * H, j * W: (j + 1) * W] = samples[idx].reshape((H, W))
+    #         idx += 1
+    #
+    # figure = pyplot.figure()
+    # axis = figure.add_subplot(1, 1, 1)
+    #
+    # pyplot.imshow(canvas, cmap = "binary")
+    #
+    # pyplot.title('MNIST handwritten digits')
+    # axis.set_xticks(numpy.array([]))
+    # axis.set_yticks(numpy.array([]))
+    #
+    # pyplot.savefig(figure_path("Distribution.pdf"))
 
 if __name__ == '__main__':
     script_directory()

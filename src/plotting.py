@@ -20,9 +20,10 @@ def main():
     
     # Setup
     
-    downsampling_factors = [2, 4]
+    downsampling_factors = [1, 2, 4]
     latent_sizes = [2, 10, 30]
-    N_epochs = 20
+    N_epochs = 50
+    binarise_downsampling = True
     
     # Fix random seed for reproducibility
     numpy.random.seed(1234)
@@ -35,13 +36,14 @@ def main():
             
             # Data
     
-            specifications = "ds{}_l{}_e{}".format(downsampling_factor, latent_size, N_epochs)
+            specifications = "ds{}{}_l{}_e{}".format(downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
             file_name = "results_" + specifications + ".pkl"
     
             try:
                 with open(data_path(file_name), "r") as f:
                     setup_and_results = pickle.load(f)
             except Exception as e:
+                print(e)
                 continue
     
             setup = setup_and_results["setup"]
@@ -192,26 +194,33 @@ def main():
                 pyplot.savefig(plot_name)
                 print("Reconstructions of homemade numbers saved as {}.".format(plot_name))
             
-        figure = pyplot.figure()
-        axis = figure.add_subplot(1, 1, 1)
-        
-        for learning_curve in learning_curves:
+        if len(learning_curves) > 1:
             
-            epochs = learning_curve["data"]["epochs"]
-            cost_train = learning_curve["data"]["training cost function"]
-            downsampling_factor = learning_curve["downsampling factor"]
+            figure = pyplot.figure()
+            axis = figure.add_subplot(1, 1, 1)
+        
+            for learning_curve in learning_curves:
             
-            axis.plot(epochs, cost_train, label = "$d = {}$".format(downsampling_factor))
+                epochs = numpy.array(learning_curve["data"]["epochs"])
+                cost_train = numpy.array(learning_curve["data"]["training cost function"])
+                downsampling_factor = learning_curve["downsampling factor"]
+                
+                for i in range(len(cost_train)):
+                    indices = cost_train > -200
+                    cost_train = cost_train[indices]
+                    epochs = epochs[indices]
+            
+                axis.plot(epochs, cost_train, label = "$d = {}$".format(downsampling_factor))
         
-        pyplot.legend(loc = "best")
+            pyplot.legend(loc = "best")
         
-        axis.set_ylabel("Variational lower bound")
-        axis.set_xlabel('Epochs')
+            axis.set_ylabel("Variational lower bound")
+            axis.set_xlabel('Epochs')
         
-        specifications = "l{}_e{}".format(latent_size, N_epochs)
-        plot_name = figure_path("learning_curves_" + specifications + ".pdf")
-        pyplot.savefig(plot_name)
-        print("Learning curves for different downsampling factors saved as {}.".format(plot_name))
+            specifications = "ds{}_l{}_e{}".format("b" if binarise_downsampling else "", latent_size, N_epochs)
+            plot_name = figure_path("learning_curves_" + specifications + ".pdf")
+            pyplot.savefig(plot_name)
+            print("Learning curves for different downsampling factors saved as {}.".format(plot_name))
         
         print
 

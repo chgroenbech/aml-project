@@ -39,9 +39,13 @@ def main():
     
     # Main setup
     
-    latent_sizes = [2, 10, 30]
-    downsampling_factors = [1, 2, 4]
-    N_epochs = 0 # 50
+    latent_sizes = [30]
+    downsampling_factors = [2]
+    N_epochs = 20
+    # latent_sizes = [2, 10, 30]
+    # downsampling_factors = [1, 2, 4]
+    # N_epochs = 50
+    binarise_downsampling = False
     
     # Setup
     
@@ -84,8 +88,10 @@ def main():
     N_test_batches = X_test.shape[0] / batch_size
 
     # Setup shared variables
-    X_train_shared = theano.shared(X_train, borrow = True)
-    X_test_shared = theano.shared(X_test, borrow = True)
+    X_train_shared = theano.shared(bernoullisample(X_train), borrow = True)
+    X_test_shared = theano.shared(bernoullisample(X_test), borrow = True)
+    
+    all_runs_duration = 0
     
     for latent_size, downsampling_factor in product(latent_sizes, downsampling_factors):
         
@@ -108,7 +114,8 @@ def main():
         if downsampling_factor != 1:
             l_enc_HR_downsample = Pool2DLayer(l_enc_HR_downsample, pool_size = downsampling_factor, mode = "average_exc_pad")
             # TODO Should downsampled data be binarised? (worse performance)
-            # l_enc_HR_downsample = NonlinearityLayer(l_enc_HR_downsample, nonlinearity = T.round)
+            if binarise_downsampling:
+                l_enc_HR_downsample = NonlinearityLayer(l_enc_HR_downsample, nonlinearity = T.round)
         l_enc_HR_downsample = ReshapeLayer(l_enc_HR_downsample, (-1, h * w * C))
     
         l_enc_LR_in = InputLayer((None, h * w * C), name = "ENC_LR_INPUT")
@@ -249,7 +256,7 @@ def main():
         
             # Shuffle train data
             numpy.random.shuffle(X_train)
-            X_train_shared.set_value(X_train)
+            X_train_shared.set_value(bernoullisample(X_train))
         
             # TODO: Using dynamically changed learning rate
             train_cost = train_epoch(learning_rate)
@@ -264,8 +271,9 @@ def main():
             # line = "Epoch: %i\tTime: %0.2f\tLR: %0.5f\tLL Train: %0.3f\tLL test: %0.3f\t" % ( epoch, t, learning_rate, train_cost, test_cost)
             print("Epoch {:d} (duration: {:.2f} s, learning rate: {:.1e}):".format(epoch + 1, epoch_duration, learning_rate))
             print("    log-likelihood: {:.3f} (training set), {:.3f} (test set)".format(train_cost, test_cost))
-    
-    
+        
+        print
+        
         # Results
     
         ## Reconstruction
@@ -364,17 +372,24 @@ def main():
                 "reconstructed homemade numbers": reconstructions_homemade
             }
         }
-    
-        file_name = "results_ds{}_l{}_e{}.pkl".format(downsampling_factor, latent_size, N_epochs)
+        
+        file_name = "results_ds{}{}_l{}_e{}.pkl".format(downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
     
         with open(data_path(file_name), "w") as f:
             pickle.dump(setup_and_results, f)
         
         run_duration = time.time() - run_start
         
+        all_runs_duration += run_duration
+        
         print("Run took {:.2f} minutes.".format(run_duration / 60))
         
         print("\n")
+    
+    print("All runs took {:.2f} minutes in total.".format(all_runs_duration / 60))
+
+def bernoullisample(x):
+    return numpy.random.binomial(1, x, size = x.shape).astype(theano.config.floatX)
 
 if __name__ == '__main__':
     script_directory()
