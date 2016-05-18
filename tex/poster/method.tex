@@ -39,45 +39,46 @@
 \subsubsection{Variational auto-encoder} % (fold)
 \label{ssub:variational_auto_encoder}
 \begin{itemize}
-	\item \textbf{Goal}: Infer same structure from LR to HR. 
-	\item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
+	% \item \textbf{Goal}: Infer same structure from LR to HR. 
+	% \item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
+	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ - Generate image from conditional Bernoulli distribution given
+	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the varitional approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$
+	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$, $\vec{\sigma}^2_\phi(\vec{x})$ and $\vec{\mu}_\theta(\vec{z})$
+	% \item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
+		% \item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
+		% \item $\max_{\curlies{\vec{\theta},\vec{\phi}}}\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$: maximize `Free Energy' as a variational lower bound.
+		% \item Derived from mean-field variational Bayes where the marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
+		% \begin{equation}
+		% 	\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
+		% \end{equation} 
+	\item \textbf{Variational lower bound}: Training criterion 
+	%non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
+		\begin{gather}
+			\begin{split}
+				\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right) =
+				\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\
+				& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }
+			\end{split}
+		\end{gather}
 	\begin{itemize}
-		\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}$ - Generate image from conditional distribution given
-		\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}$ - Unobserved latent variable generated from the varitional approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$
-	\end{itemize}
-	\item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
-	\begin{itemize}
-		\item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
-		\item $\max_{\curlies{\vec{\theta},\vec{\phi}}}\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$: maximize `Free Energy' as a variational lower bound.
-		\item Derived from mean-field variational Bayes where the marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
-		\begin{equation}
-			\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
-		\end{equation} 
-		\item \textbf{Variational lower bound}: non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
-			\begin{gather}
-				\begin{split}
-					\log \dec{\vec{x}} & \ge \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right) =
-					\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\
-					& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }
-				\end{split}
-			\end{gather}
-		\item First term: Regularizing $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. Has a differentiable analytical solution.
-		\item Second term: Reconstruction error. Has a differentiable Monte Carlo estimate:
+		\item \textbf{1. term: Regularization} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. Has a differentiable analytical solution.
+		\item \textbf{2. term: Reconstruction error} Has a differentiable Monte Carlo estimate:
 		\begin{equation}
 			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}
 		\end{equation}
-		\item where a reparameterization trick is used for sampling $\vec{z}\order{l}= \vec{\mu} + \vec{\sigma} \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$
-	\end{itemize}
-	\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
+		\item \textbf{A Reparameterization trick} is here used for sampling $\vec{z}\order{l}= \vec{\mu} + \vec{\sigma} \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$
+		\end{itemize}
+	
+	%\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
 \end{itemize}
 % subsubsection variational_auto_encoder (end)
 
-\subsubsection{Neural Networks} % (fold)
-\label{subsub:neural_networks}
-\begin{itemize}
-	\item Fully connected NN
-	\item Convolutional NN 
-\end{itemize}
+% \subsubsection{Neural Networks} % (fold)
+% \label{subsub:neural_networks}
+% \begin{itemize}
+% 	\item Fully connected NN
+% 	\item Convolutional NN 
+% \end{itemize}
 % subsubsection neural_networks (end)
 
 

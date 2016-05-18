@@ -1,9 +1,9 @@
 \section{introduction}
 \label{sec:introduction}
-
-The use for Super-resolution imaging are vast and important for presenting high quality content fast in modern digital medias with compression schemes due to restricted bandwidth in f.ex. online streaming services like Netflix, which can achieve super fast streaming by LR transfer and high res. translation (decoding) on the local device. Traditional techniques infer information from patches within the image or between frames to lower the entropy and signal-to-noise ratio.
+Modern research in deep learning, using convolutional neural networks \cite{Dong15} and variational auto-encoders \cite{Kingma2013} \cite{Johnson16}, provide promising applications for better super-resolution imaging.  
+The use for super-resolution imaging (SR) are vast and important for presenting high quality content fast in modern digital medias with compression schemes due to restricted bandwidth. Online streaming services, like Netflix, can provide faster streaming through applying SR on low resolution movies on the local device. Traditional techniques infer information from patches within the image or between frames to lower the entropy and signal-to-noise ratio. 
 % TODO: List more trad, techniques
 Statistical inference from low to high dimensions like these require generating the most probable values from a prior learned over the structure in images. As Kingma et al \cite{Kingma2013} suggests, Variational auto-encoders could be highly applicaple for this together with image denoising and inpainting in case of missing data.
 
-Building a variational auto-encoder model, which can infer structure in high resolution images from low resolution images just from reconstructing the underlying process is therefore of great interest and compared against bicubic interpolation HR reconstruction for downsampled MNIST dataset \cite{MNIST}.
+We are here suggesting a new SR technique, using a variational auto-encoder model, which can infer structure in high resolution images from low resolution images just from reconstructing the underlying process. therefore of great interest and is here compared against bicubic interpolation HR reconstruction for downsampled MNIST dataset \cite{MNIST}.
  

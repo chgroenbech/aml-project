@@ -1,4 +1,4 @@
-\usetikzlibrary{arrows,positioning} 
+\usetikzlibrary{arrows,positioning,shapes.geometric,decorations.pathreplacing} 
 \tikzset{
     %Define standard arrow tip
     >=stealth'
@@ -6,28 +6,38 @@
 \begin{tikzpicture}[x = 1cm, y = 1cm, thick,
 		image/.style={rectangle, draw, inner sep = 0pt, minimum size = 2 cm},
 		network/.style={rectangle, draw, inner sep = 0pt, minimum size = 2 cm},
-		arrow/.style={ ->, ultra thick, shorten <= 1 mm, shorten >= 1 mm}, node distance=2 cm
+		arrow/.style={ ->, ultra thick, shorten <= 1 mm, shorten >= 1 mm}, 
+		stoch/.style={diamond, draw, inner sep = 0pt, minimum size = 2cm},
+		node distance=2 cm
 	]
 	
-	\node[image, minimum size = 6 cm] (HR) at (0, 0) {$\vec{x}_{HR}$};
+	\node[image, minimum size = 6 cm] (HR) at (0, 0) {\includegraphics[width= 5.5cm]{example_original_ds2_l30_e50}};
+	\node[below = 1cm of HR] (xHR) {$\vec{x}_{HR}$};
 	
+	\node[image, minimum size = 3 cm, right = of HR] (LR) {\includegraphics[width= 2.75cm]{example_downsampled_ds2_l30_e50}};
+	\node[right = 4cm of xHR] (xLR) {$\vec{x}_{LR}$};
 	
-	\node[image, minimum size = 3 cm, right = of HR] (LR) {$\vec{x}_{LR}$};
+	\node[network, minimum size = 4 cm, right = of LR] (encoder) {NN};
+
+	\node[stoch, minimum size = 2 cm, right = of encoder] (latent) {$\vec{z}$};
 	
-	
-	\node[network, minimum size = 4 cm, right = of LR] (encoder) {$\enc{\vec{z}|\vec{x}}$};
+	\node[network, minimum size = 4 cm, right = of latent] (decoder) {NN};
 		
-	\node[network, minimum size = 1.5 cm, right = of encoder] (latent) {$\vec{z}$};
-	
-	
-	\node[network, minimum size = 4 cm, right = of latent] (decoder) {$\dec{\vec{x}|\vec{z}}$};
-		
-	\node[image, minimum size = 6 cm, right = of decoder] (reconstruction) {$\tilde{\vec{x}}_{HR}$};
-		
+	\node[image, minimum size = 6 cm, right = of decoder] (reconstruction) {\includegraphics[width= 5.5cm]{example_reconstructed_ds2_l30_e50}};
+	\node[below = 1cm of reconstruction] (xHR_Rec) {$\tilde{\vec{x}}_{HR}$};
+
 	\draw[arrow] (HR) -- (LR);
 	\draw[arrow] (LR) -- (encoder);
 	\draw[arrow] (encoder) -- (latent);
 	\draw[arrow] (latent) -- (decoder);
 	\draw[arrow] (decoder) -- (reconstruction);
 	
+	\draw [decorate,decoration={brace,amplitude=30pt},xshift=0pt,yshift=0pt]
+	(5 cm, 3.2 cm) -- (17 cm, 3.2 cm) node [black,midway,yshift=2cm] 
+	{Encoder: $\enc{\vec{z}|\vec{x}}$};
+
+	\draw [decorate,decoration={brace,amplitude=30pt},xshift=0pt,yshift=0pt]
+	(17 cm, 3.2 cm) -- (32 cm, 3.2 cm) node [black,midway,yshift=2cm] 
+	{Decoder: $\dec{\vec{x}|\vec{z}}$};
+
 \end{tikzpicture}
