@@ -1,4 +1,37 @@
 \section{Results}
 \label{sec:results}
 
-\lipsum[4]
+\begin{columnfigure}
+	\centering
+	\includegraphics[width=\linewidth]{learning_curves_ds_l30_e50}
+	\figcaption{Learning curves for both training and test sets for differing downsampling factors $d$ with a latent size of $N_{\vec{z}} = 30$.}
+\end{columnfigure}
+
+\begin{center}
+	\setlength{\tabcolsep}{1em}
+	\sisetup{
+		table-number-alignment = center
+	}
+	\begin{tabular}{
+			l@{}
+			S[table-format = 2.0]
+			S[table-format = 1.0]
+			S[table-format = -3.2]
+			S[table-format = -3.2]
+		}
+		\toprule
+		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$} & {$\mathcal{L}\idx{test}$} \\
+		\midrule
+		\input{../../data/results_variational_lower_bound}
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+\begin{columnfigure}
+	\centering
+	\includegraphics[width=\linewidth]{reconstructions_set_ds_l30_e50.pdf}
+	\figcaption{\rephrase{Sampled data.}}
+\end{columnfigure}
+
+\rephrase{Learning rate}
+\rephrase{Hidden size}

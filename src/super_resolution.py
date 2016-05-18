@@ -39,12 +39,10 @@ def main():
     
     # Main setup
     
-    latent_sizes = [30]
-    downsampling_factors = [2]
-    N_epochs = 20
-    # latent_sizes = [2, 10, 30]
-    # downsampling_factors = [1, 2, 4]
-    # N_epochs = 50
+    latent_sizes = [10]
+    # latent_sizes = [2, 5, 10, 30, 50, 100]
+    downsampling_factors = [1, 2, 4]
+    N_epochs = 50
     binarise_downsampling = False
     
     # Setup
@@ -59,7 +57,7 @@ def main():
     batch_size = 100
     
     analytic_kl_term = True
-    learning_rate = 0.01 #0.0003
+    learning_rate = 0.001 #0.0003
     
     shape = [H * W * C]
     
@@ -278,7 +276,7 @@ def main():
     
         ## Reconstruction
     
-        N_reconstructions = 10
+        N_reconstructions = 50
     
         X_test_eval = X_test_shared.eval()
         subset = numpy.random.randint(0, len(X_test_eval), size = N_reconstructions)
@@ -293,9 +291,9 @@ def main():
             "downsampled":  x_LR,
             "reconstructions": x_reconstructed
         }
-    
+        
         ## Manifold
-    
+        
         if latent_size == 2:
         
             x = numpy.linspace(0.1, 0.9, 20)

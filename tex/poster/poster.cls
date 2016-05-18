@@ -137,6 +137,12 @@
 \captiontitlefinal{}
 \newsubfloat{figure}
 \tightsubcaptions
+\newenvironment{columnfigure}
+  {\par\medskip\noindent\minipage{\linewidth}}
+  {\endminipage\par\medskip}
+\newfixedcaption{\figcaption}{figure}
+\tightlists
+% \firmlists
 
 % Units
 \sisetup{%
