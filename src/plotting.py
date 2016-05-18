@@ -38,7 +38,7 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [2, 10, 30]
+    latent_sizes = [2, 5, 10, 30]
     # latent_sizes = [2, 10, 30]
     N_epochs = 50
     binarise_downsampling = False
@@ -94,8 +94,9 @@ def main():
             
             if downsampling_factor == 1:
                 cost_test_ds1 = cost_test[-1]
+                cost_train_ds1 = cost_train[-1]
             elif downsampling_factor > 1:
-                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_test[-1], cost_test[-1] - cost_test_ds1)
+                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_test[-1], cost_train[-1] - cost_train_ds1, cost_test[-1] - cost_test_ds1)
                 table.append(table_row)
             
             figure = pyplot.figure()

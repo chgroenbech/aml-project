@@ -6,14 +6,14 @@ from itertools import izip, count
 
 colours = [
     (0.07, 0.40, 0.69), # blue
-    (0.09, 0.65, 0.28), # green
     (0.92, 0.16, 0.16), # red
+    (0.09, 0.65, 0.28), # green
     (0.99, 0.96, 0.21), # yellow
     (0.55, 0.19, 0.52), # purple
     (0.96, 0.51, 0.20), # orange
     (0.16, 0.72, 0.70), # blue--green
-    (0.46, 0.76, 0.27), # green--yellow
     (0.70, 0.19, 0.43), # red--purple
+    (0.46, 0.76, 0.27), # green--yellow
     (0.98, 0.72, 0.22), # yellow--orange
     (0.24, 0.22, 0.55), # purple--blue
     (0.94, 0.35, 0.18), # orange--red

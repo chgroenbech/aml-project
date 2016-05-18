@@ -21,9 +21,10 @@
 			S[table-format = -3.2]
 			S[table-format = -3.2]
 			S[table-format = -2.2]
+			S[table-format = -2.2]
 		}
 		\toprule
-		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$} & {$\mathcal{L}\idx{test}$} & {$\mathcal{L}\idx{test} - \mathcal{L}\idx{test}\order{d = 1}$} \\
+		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$} & {$\mathcal{L}\idx{test}$} & {$\mathcal{L}\idx{train} - \mathcal{L}\idx{train}\order{d = 1}$} & {$\mathcal{L}\idx{test} - \mathcal{L}\idx{test}\order{d = 1}$} \\
 		\midrule
 		\input{../../data/results_variational_lower_bound}
 		\bottomrule
@@ -33,8 +34,9 @@
 \begin{columnfigure}
 	\centering
 	\includegraphics[width=\linewidth]{reconstructions_set_ds_l30_e50.pdf}
-	\figcaption{Sampled numbers from the test set for two downsampling factors (given above the numbers), their downsampled versions as well as upscaled results using \rephrase{a bicubic method} and a varitional auto-encoder method.}
+	\figcaption{Sampled numbers from the test set for two downsampling factors (given above the numbers), their downsampled versions as well as upscaled results using bicubic interpolation and variational auto-encoding.}
 \end{columnfigure}
+% TODO Include homemade numbers in samples?
 
 % TODO: Learning rate
 % TODO: Hidden size
