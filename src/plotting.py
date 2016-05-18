@@ -14,7 +14,11 @@ from scipy.misc import imresize
 
 from pprint import pprint
 
-from aux import data_path, figure_path, script_directory
+from cycler import cycler
+
+from aux import data_path, figure_path, script_directory, colours
+
+pyplot.rc("axes", prop_cycle = cycler("color", colours))
 
 def main():
     
@@ -61,10 +65,17 @@ def main():
             learning_curve = results["learning curve"]
             learning_curves.append({"data": learning_curve, "downsampling factor": downsampling_factor})
             
-            epochs = learning_curve["epochs"]
-            cost_train = learning_curve["training cost function"]
-            cost_test = learning_curve["test cost function"]
-    
+            epochs = numpy.array(learning_curve["epochs"])
+            cost_train = numpy.array(learning_curve["training cost function"])
+            cost_test = numpy.array(learning_curve["test cost function"])
+            
+            
+            for i in range(len(cost_train)):
+                indices = (cost_train > -200) * (cost_test > -200)
+                cost_train = cost_train[indices]
+                cost_test = cost_test[indices]
+                epochs = epochs[indices]
+            
             figure = pyplot.figure()
             axis = figure.add_subplot(1, 1, 1)
     
@@ -198,19 +209,22 @@ def main():
             
             figure = pyplot.figure()
             axis = figure.add_subplot(1, 1, 1)
-        
-            for learning_curve in learning_curves:
             
+            for c, learning_curve in enumerate(learning_curves):
+                
                 epochs = numpy.array(learning_curve["data"]["epochs"])
                 cost_train = numpy.array(learning_curve["data"]["training cost function"])
+                cost_test = numpy.array(learning_curve["data"]["test cost function"])
                 downsampling_factor = learning_curve["downsampling factor"]
                 
                 for i in range(len(cost_train)):
-                    indices = cost_train > -200
+                    indices = (cost_train > -200) * (cost_test > -200)
                     cost_train = cost_train[indices]
+                    cost_test = cost_test[indices]
                     epochs = epochs[indices]
-            
-                axis.plot(epochs, cost_train, label = "$d = {}$".format(downsampling_factor))
+                
+                axis.plot(epochs, cost_train, color = colours[c], label = "$d = {}$".format(downsampling_factor))
+                axis.plot(epochs, cost_test, linestyle = 'dashed', color = colours[c], label = "$d = {}$".format(downsampling_factor))
         
             pyplot.legend(loc = "best")
         
