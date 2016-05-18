@@ -138,9 +138,13 @@
 \newsubfloat{figure}
 \tightsubcaptions
 \newenvironment{columnfigure}
-  {\par\medskip\noindent\minipage{\linewidth}}
-  {\endminipage\par\medskip}
+	{\par\medskip\noindent\minipage{\linewidth}}
+	{\endminipage\par\medskip}
 \newfixedcaption{\figcaption}{figure}
+\newenvironment{columntable}
+	{\par\medskip\noindent\minipage{\linewidth}}
+	{\endminipage\par\medskip}
+\newfixedcaption{\tabcaption}{table}
 \tightlists
 % \firmlists
 

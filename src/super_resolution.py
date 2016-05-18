@@ -39,7 +39,7 @@ def main():
     
     # Main setup
     
-    latent_sizes = [10]
+    latent_sizes = [5]
     # latent_sizes = [2, 5, 10, 30, 50, 100]
     downsampling_factors = [1, 2, 4]
     N_epochs = 50

@@ -7,7 +7,9 @@
 	\figcaption{Learning curves for both training and test sets for differing downsampling factors $d$ with a latent size of $N_{\vec{z}} = 30$.}
 \end{columnfigure}
 
-\begin{center}
+\begin{columntable}
+	\centering
+	\tabcaption{The variational lower bound after $50$ epochs for both training and test set.}
 	\setlength{\tabcolsep}{1em}
 	\sisetup{
 		table-number-alignment = center
@@ -18,14 +20,15 @@
 			S[table-format = 1.0]
 			S[table-format = -3.2]
 			S[table-format = -3.2]
+			S[table-format = -2.2]
 		}
 		\toprule
-		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$} & {$\mathcal{L}\idx{test}$} \\
+		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$} & {$\mathcal{L}\idx{test}$} & {$\mathcal{L}\idx{test} - \mathcal{L}\idx{test}\order{d = 1}$} \\
 		\midrule
 		\input{../../data/results_variational_lower_bound}
 		\bottomrule
 	\end{tabular}
-\end{center}
+\end{columntable}
 
 \begin{columnfigure}
 	\centering
