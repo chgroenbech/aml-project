@@ -177,7 +177,7 @@
 		\prebibhook
 	}
 }
-\renewcommand{\prebibhook}{\small}
+\renewcommand{\prebibhook}{\footnotesize}
 % \renewcommand{\postbibhook}{\balance}
 
 % Text formatting

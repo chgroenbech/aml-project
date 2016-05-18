@@ -1,4 +1,34 @@
-\section{Conclusion}
-\label{sec:conclusion}
+\section{Conclusion} \label{sec:conclusion}
 
-\lipsum[8-9]
+% TODO Conclude on results and discussion.
+\begin{itemize}
+	\item Promising:
+	\begin{itemize}
+		\item Better reconstructions than with Bicubic interpolation
+		\item Robust towards loss in resolution.
+	\end{itemize}
+\end{itemize}
+	
+\subsection{Outlook}
+\label{sub:outlook}
+
+\begin{itemize}
+	\item Loss function:
+	\begin{itemize}
+		\item Per pixel (ours and previous)
+		\item Per feature \cite{Johnson16}
+	\end{itemize}
+	
+	\item Conv.net.
+	
+	\item Using semi-supervised VAE for style \cite{Kingma2014}
+	
+	\item Method of downsampling:
+	\begin{itemize}
+		\item Average pooling layer
+		\item Maximimum pooling layer
+		\item Low-pass filter
+	\end{itemize}
+	
+	\item Go to continuous pixel values (Gaussian) instead of binarised (Bernoulli).
+\end{itemize}

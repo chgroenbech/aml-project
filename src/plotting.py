@@ -342,7 +342,7 @@ def main():
             axis.imshow(image, cmap = 'binary')
             
             row_alignment = {"horizontalalignment": "right", "verticalalignment": "center"}
-            column_alignment = {"horizontalalignment": "center", "verticalalignment": "baseline", "size": "large"}
+            column_alignment = {"horizontalalignment": "center", "verticalalignment": "baseline", "size": "x-large"}
             
             axis.text(-5, 0.5 * H, "Originals", fontdict = row_alignment)
             axis.text(-5, 1.5 * H, "Downsampled", fontdict = row_alignment)

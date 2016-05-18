@@ -1,4 +1,11 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\lipsum[1]
+\begin{itemize}
+	\item Except for in the first few epochs, using images downsampled by a factor of $2$ is comparable to images without downsampling as seen in Figure~\ref{fig:learning_curves}, whereas using images downsampling by a factor of $4$ is consistently worse.
+	\item The importance of the latent size $N_{\vec{z}}$ can be seen in Table~\ref{tab:variational_lower_bound}\dots
+	\item \change{Comment on differences.}
+	\item There is also a large difference between downsampling factor for each latent size, but looking at Figure~\ref{fig:samples} the reconstructions are comparable.
+	\item Comparing reconstructions using bicubic interpolation and the VAE, the VAE gives somewhat better, albeit smoother reconstructions for $d = 2$, whereas there is a remarkable difference in the favour of the VAE for $d = 4$.
+	% TODO Robust.
+\end{itemize}

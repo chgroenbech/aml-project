@@ -5,11 +5,13 @@
 	\centering
 	\includegraphics[width=\linewidth]{learning_curves_b_ds_l30_e50}
 	\figcaption{Learning curves for both training and test sets for differing downsampling factors $d$ with a latent size of $N_{\vec{z}} = 30$.}
+	\label{fig:learning_curves}
 \end{columnfigure}
 
 \begin{columntable}
 	\centering
 	\tabcaption{The variational lower bound after $50$ epochs for both training and test set as well as the differences from the variational lower bound without downsampling, $\mathcal{L}\order{d = 1}$, for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.}
+	\label{tab:variational_lower_bound}
 	\setlength{\tabcolsep}{1em}
 	\sisetup{
 		table-number-alignment = center
@@ -38,6 +40,7 @@
 	\centering
 	\includegraphics[width=\linewidth]{reconstructions_set_b_ds_l30_e50.pdf}
 	\figcaption{Sampled numbers from the test set for two downsampling factors (given above the numbers), their downsampled versions as well as upscaled reconstruction of the downsampled versions using bicubic interpolation and variational auto-encoding.}
+	\label{fig:samples}
 \end{columnfigure}
 % TODO Include homemade numbers in samples?
 
