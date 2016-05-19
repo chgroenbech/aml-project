@@ -19,7 +19,7 @@
 \begin{columnfigure}
 	\centering
 	\input{model.tex}
-	\figcaption{Diagram of model. Originals, $\vec{x}\idx{HR}$, are binarised and downsampled, $\vec{x}\idx{LR}$. Reconstructrions, $\tilde{\vec{x}}\idx{HR}$, are thet results of the VAE.}
+	\figcaption{Diagram of model. Originals, $\vec{x}\idx{HR}$, are binarised and downsampled, $\vec{x}\idx{LR}$. Reconstructions, $\tilde{\vec{x}}\idx{HR}$, are they results of the VAE.}
 	\label{fig:diagram}
 \end{columnfigure}
 
@@ -34,7 +34,7 @@
 \label{ssub:downsampling}
 
 \begin{itemize}
-	\item HR images downsamped by a factor of $d$ using \textbf{mean filter} (pooling layer).
+	\item HR images downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
 \end{itemize}
 
 \subsubsection{Variational auto-encoder}
@@ -53,7 +53,7 @@
 		% \begin{equation}
 		% 	\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
 		% \end{equation} 
-	\item \textbf{Variational lower bound}: Cost function: 
+	\item \textbf{Variational lower bound:}
 	%non-negativity of the Kulback-Leibler divergence makes the Free energy $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ a lower bound for the marginal log-likelihood:
 		\begin{gather*}
 			\begin{split}
@@ -63,12 +63,12 @@
 			\end{split}
 		\end{gather*}
 	\begin{itemize}
-		\item \textbf{First term} is the \textbf{regularisation} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. It has a differentiable analytical solution.
-		\item \textbf{Second term} is the \textbf{reconstruction error}. This has a differentiable Monte Carlo estimate:
+		\item The \textbf{first term} is the \textbf{regularisation} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. It has a differentiable analytical solution.
+		\item The \textbf{second term} is the expected negative \textbf{reconstruction error}. This has a differentiable Monte Carlo estimate:
 		\begin{equation*}
 			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
 		\end{equation*}
-		\item A \textbf{reparameterization trick} is used for sampling $\vec{z}\order{l}= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$.
+		\item A \textbf{reparameterisation trick} is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$.
 		\end{itemize}
 	
 	%\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
@@ -89,6 +89,6 @@
 \label{sub:experiments}
 
 \begin{itemize}
-	\item Reconstruct HR images using the VAE with two fully-connected neural networks with $200$ hidden neurons each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
-	\item Compare reconstructions using VAE with a bicubic interpoltation upscaling.
+	\item Reconstruct HR images using the VAE with two fully-connected neural networks with $200$ hidden neurones each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
+	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
 \end{itemize}
