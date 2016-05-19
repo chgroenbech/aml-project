@@ -28,7 +28,7 @@
 	\node[network, minimum size = 4 cm, right = of latent] (decoder) {NN};
 		
 	\node[image, minimum size = 6 cm, right = of decoder] (reconstruction) {\includegraphics[width= 5.5cm]{example_reconstructed_ds2_l30_e50}};
-	\node[below = 1cm of reconstruction] (xHR_Rec) {$\tilde{\vec{x}}_{HR}$};
+	\node[below = .5cm of reconstruction] (xHR_Rec) {$\tilde{\vec{x}}_{HR}$};
 
 	\draw[arrow] (HR) -- (LR);
 	\draw[arrow] (LR) -- (encoder);

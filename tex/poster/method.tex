@@ -30,11 +30,12 @@
 % 	\item $\vec{x}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
 % \end{itemize}
 
-\subsubsection{Downsampling}
+\subsubsection{Preprocessing of HR images}
 \label{ssub:downsampling}
 
 \begin{itemize}
-	\item HR images downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
+	\item Binarised using Bernoulli sampling.
+	\item Downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
 \end{itemize}
 
 \subsubsection{Variational auto-encoder}
@@ -85,10 +86,10 @@
 % Differentiation of L
 % Output parameters (mu and sigma)
 
-\subsection{Experiment}
+\subsection{Experiments}
 \label{sub:experiments}
 
 \begin{itemize}
-	\item Reconstruct HR images using the VAE with two fully-connected neural networks with $200$ hidden neurones each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
+	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions} and $L = 1$ for the sampling of $\vec{z}$.
 	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
 \end{itemize}
