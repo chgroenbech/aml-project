@@ -2,10 +2,9 @@
 \label{sec:discussion}
 
 \begin{itemize}
-	\item Except for in the first few epochs, the variational lower bound for $d = 2$ is comparable to the one for no downsampling as seen in Figure~\ref{fig:learning_curves}, whereas it is consistently worse for $d = 4$.
-	\item The importance of the latent size $N_{\vec{z}}$ can be seen in Table~\ref{tab:variational_lower_bound}\dots
-	\item \change{Comment on differences.}
-	\item There is also a large difference between downsampling factor for each latent size, but looking at Figure~\ref{fig:samples} the reconstructions are comparable.
-	\item Comparing reconstructions using bicubic interpolation and the VAE, the VAE gives somewhat better, albeit smoother reconstructions for $d = 2$, whereas there is a remarkable difference in the favour of the VAE for $d = 4$.
-	% TODO Robust.
+	\item The variational lower bound for $d = 2$ is comparable to the one for no downsampling (except for in the first few epochs) as seen in Figure~\ref{fig:learning_curves}, whereas it is consistently worse for $d = 4$.
+	\item The importance of the latent size $N_{\vec{z}}$ can be seen in Table~\ref{tab:variational_lower_bound} as $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx 10$, whereas $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx 2$.
+	\item The test variational lower bound gets significantly lower from a latent size of $5$ to $10$, but it does not get much for higher latent sizes.
+	\item There is also a large difference for the variational lower bound between downsampling factors for each latent size, but looking at Figure~\ref{fig:samples} the reconstructions are comparable, i.e.\ the VAE is close to robust towards the losses in resolution.
+	\item Comparing the reconstructions using bicubic interpolation and the VAE, the VAE gives somewhat better, albeit smoother reconstructions for $d = 2$, whereas there is a remarkable difference in favour of the VAE for $d = 4$.
 \end{itemize}

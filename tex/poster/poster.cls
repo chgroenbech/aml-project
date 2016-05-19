@@ -34,8 +34,7 @@
 
 % Load packages for scientific articles
 \usepackage{siunitx}					% SI units
-\usepackage[square, numbers]{natbib}	% Natural science references
-\bibliographystyle{ieeetr}
+% \usepackage[square, numbers]{natbib}	% Natural science references
 
 % Load miscellaneous packgaes
 \usepackage{xcolor}						% Extended package for colouring
@@ -127,7 +126,7 @@
 \setsecheadstyle{\centering\large\bfseries\MakeUppercase}
 \setsubsecheadstyle{\flushleft\bfseries}
 \setsubsubsecheadstyle{\flushleft\itshape}
-\setbeforesecskip{1.5ex plus 1ex minus .2ex}
+\setbeforesecskip{-1.5ex plus .2ex minus .2ex}
 \setaftersecskip{1.5ex plus .2ex}
 \setaftersubsecskip{1pt}
 \setaftersubsubsecskip{1pt}
@@ -174,6 +173,7 @@
 \newcommand{\rephrase}[1]{\textcolor{orange}{#1}}
 
 % References
+\bibliographystyle{IEEEtran}
 \addto\captionsbritish{
 	\renewcommand\bibname{References}
 	\renewcommand{\bibsection}{
@@ -181,7 +181,8 @@
 		\prebibhook
 	}
 }
-\renewcommand{\prebibhook}{\small}
+\setlength{\bibitemsep}{-0.33\parsep}
+\renewcommand{\prebibhook}{\footnotesize}
 % \renewcommand{\postbibhook}{\balance}
 
 % Text formatting

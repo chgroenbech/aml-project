@@ -22,7 +22,7 @@ from aux import data_path, figure_path, script_directory, colours
 TeX = False
 
 pyplot.rc("axes", prop_cycle = cycler("color", colours))
-pyplot.rc("figure", figsize = (10, 4))
+pyplot.rc("figure", figsize = (10, 3.5))
 
 if TeX:
     pyplot.rc("text", usetex = True)
@@ -38,7 +38,7 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [5, 30, 50]
+    latent_sizes = [5, 10, 30, 50]
     # latent_sizes = [2, 5, 10, 30, 50, 100]
     # latent_sizes = [2, 5, 10, 30]
     N_epochs = 50
