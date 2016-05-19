@@ -30,19 +30,12 @@
 \end{itemize}
 
 
-\subsubsection{Downsampling}
-\label{ssub:downsampling}
 \begin{itemize}
-	\item HR images was downsampled by using a \textbf{mean pooling layer}.
-\end{itemize}
-
-\subsubsection{Variational auto-encoder}
-\label{ssub:variational_auto_encoder}
-\begin{itemize}
+	\item \textbf{Downsampling} HR images using a \textbf{mean pooling layer}.
 	% \item \textbf{Goal}: Infer same structure from LR to HR. 
 	% \item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
-	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given
 	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
+	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given $\vec{z}$
 	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\vec{z}$ and $\vec{\mu}_\theta(\vec{z})$ for $\vec{x}$.
 	% \item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
 		% \item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
