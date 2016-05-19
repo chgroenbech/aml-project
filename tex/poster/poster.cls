@@ -110,7 +110,7 @@
 	\end{center}
 }
 \predate{\begin{center} \footnotesize}
-\postdate{\end{center} \vspace*{-2\onelineskip}}
+\postdate{\end{center} \vspace*{-3\onelineskip}}
 \renewcommand{\maketitlehookd}{
 	\aftergroup\@afterindentfalse
 	\aftergroup\@afterheading

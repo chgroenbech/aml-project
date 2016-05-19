@@ -29,9 +29,17 @@
 	\item $\vec{x}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
 \end{itemize}
 
+\subsubsection{Downsampling}
+\label{ssub:downsampling}
 
 \begin{itemize}
-	\item \textbf{Downsampling} HR images using a \textbf{mean pooling layer}.
+	\item HR images using a \textbf{mean pooling layer}.
+\end{itemize}
+
+\subsubsection{Variational auto-encoder}
+\label{ssub:vae}
+
+\begin{itemize}
 	% \item \textbf{Goal}: Infer same structure from LR to HR. 
 	% \item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
 	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
@@ -76,7 +84,7 @@
 % Differentiation of L
 % Output parameters (mu and sigma)
 
-\subsection{Experiments}
+\subsection{Experiment}
 \label{sub:experiments}
 
 \begin{itemize}

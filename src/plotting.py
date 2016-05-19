@@ -38,7 +38,8 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [2, 5, 30]
+    latent_sizes = [10, 30, 50]
+    # latent_sizes = [2, 5, 10, 30, 50, 100]
     # latent_sizes = [2, 5, 10, 30]
     N_epochs = 50
     binarise_downsampling = False

@@ -2,33 +2,14 @@
 
 % TODO Conclude on results and discussion.
 \begin{itemize}
-	\item Promising:
+	\item Better reconstructions than with Bicubic interpolation
+	\item Robust towards loss in resolution.
+	\item Outlook:
 	\begin{itemize}
-		\item Better reconstructions than with Bicubic interpolation
-		\item Robust towards loss in resolution.
+		\item Per-feature loss function \cite{Johnson16}, instead of per-pixel loss.
+		\item Convolutional neural network for encoder and decoder.
+		\item Semi-supervised VAE for separating digits and style \cite{Kingma2014}.
+		\item Low-pass filter for downsampling.
+		% \item Continuous pixel values (Gaussian) instead of binarised (Bernoulli).
 	\end{itemize}
-\end{itemize}
-	
-\subsection{Outlook}
-\label{sub:outlook}
-
-\begin{itemize}
-	\item Loss function:
-	\begin{itemize}
-		\item Per pixel (ours and previous)
-		\item Per feature \cite{Johnson16}
-	\end{itemize}
-	
-	\item Conv.net.
-	
-	\item Using semi-supervised VAE for style \cite{Kingma2014}
-	
-	\item Method of downsampling:
-	\begin{itemize}
-		\item Average pooling layer
-		\item Maximimum pooling layer
-		\item Low-pass filter
-	\end{itemize}
-	
-	\item Go to continuous pixel values (Gaussian) instead of binarised (Bernoulli).
 \end{itemize}
