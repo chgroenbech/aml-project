@@ -13,10 +13,14 @@
 	
 	\node[image, minimum size = 6 cm] (HR) at (0, 0) {\includegraphics[width= 5.5cm]{example_original_ds2_l30_e50}};
 	\node[below = 1cm of HR] (xHR) {$\vec{x}_{HR}$};
-	
+	\node[above = 0.1cm of HR] (xdim_HR) {28};
+	\node[left = 0.1cm of HR] (ydim_HR) {28};
+
+
 	\node[image, minimum size = 3 cm, right = of HR] (LR) {\includegraphics[width= 2.75cm]{example_downsampled_ds2_l30_e50}};
 	\node[right = 4cm of xHR] (xLR) {$\vec{x}_{LR}$};
-	
+	\node[above = 0.1cm of LR] (xdim_LR) {28/d};
+
 	\node[network, minimum size = 4 cm, right = of LR] (encoder) {NN};
 
 	\node[stoch, minimum size = 2 cm, right = of encoder] (latent) {$\vec{z}$};
