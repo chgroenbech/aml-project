@@ -127,6 +127,10 @@
 \setsecheadstyle{\centering\large\bfseries\MakeUppercase}
 \setsubsecheadstyle{\flushleft\bfseries}
 \setsubsubsecheadstyle{\flushleft\itshape}
+\setbeforesecskip{1.5ex plus 1ex minus .2ex}
+\setaftersecskip{1.5ex plus .2ex}
+\setaftersubsecskip{1pt}
+\setaftersubsubsecskip{1pt}
 
 % ToC
 \settocdepth{subparagraph}
@@ -177,7 +181,7 @@
 		\prebibhook
 	}
 }
-\renewcommand{\prebibhook}{\footnotesize}
+\renewcommand{\prebibhook}{\small}
 % \renewcommand{\postbibhook}{\balance}
 
 % Text formatting

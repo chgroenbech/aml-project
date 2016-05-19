@@ -6,6 +6,7 @@
 \begin{itemize}
 	\item \textbf{MNIST dataset} \cite{MNIST}: i.i.d. images, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, of handwritten digits:
 	\begin{itemize}
+		\item $28 \times 28$ pixels with one channel.
 		\item \textbf{Training set} (including validation set) of 60000 images.
 		\item \textbf{Test set} of 10000 images.
 	\end{itemize}
@@ -18,22 +19,22 @@
 \begin{columnfigure}
 	\centering
 	\input{model.tex}
-	\figcaption{Diagram of model.}
+	\figcaption{Diagram of model. Originals, $\vec{x}\idx{HR}$, are binarised and downsampled, $\vec{x}\idx{LR}$. Reconstructrions, $\tilde{\vec{x}}\idx{HR}$, are thet results of the VAE.}
 	\label{fig:diagram}
 \end{columnfigure}
 
-\begin{itemize}
-	
-	\item $\tilde{\vec{x}}_{HR}$: reconstructions of
-	\item $\vec{x}_{HR}: 28\times 28$ high-resolution (HR) images from
-	\item $\vec{x}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
-\end{itemize}
+% \begin{itemize}
+%
+% 	\item $\tilde{\vec{x}}_{HR}$: reconstructions of
+% 	\item $\vec{x}_{HR}: 28\times 28$ high-resolution (HR) images from
+% 	\item $\vec{x}_{LR}: (28/d)\times (28/d)$ low-resolution (LR) images (downsampled by a factor of $d$)
+% \end{itemize}
 
 \subsubsection{Downsampling}
 \label{ssub:downsampling}
 
 \begin{itemize}
-	\item HR images using a \textbf{mean pooling layer}.
+	\item HR images downsamped by a factor of $d$ using \textbf{mean filter} (pooling layer).
 \end{itemize}
 
 \subsubsection{Variational auto-encoder}
@@ -42,9 +43,9 @@
 \begin{itemize}
 	% \item \textbf{Goal}: Infer same structure from LR to HR. 
 	% \item \textbf{Solution}: Assume underlying probabilistic data generating process behind the production of digits. 
-	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}}=\mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ - Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
+	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ -- Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
 	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given $\vec{z}$
-	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\vec{z}$ and $\vec{\mu}_\theta(\vec{z})$ for $\vec{x}$.
+	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\vec{z}$ and $\vec{\mu}_\theta(\vec{z})$ for $\dec{\vec{x}|\vec{z}}$.
 	% \item \textbf{Per-pixel loss-function}: `Free Energy' $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$:
 		% \item $\min_{\curlies{\vec{\theta},\vec{\phi}}} D_{KL}\parens{\enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}}$: Minimize Kulback-Leibler divergence narrowed down by
 		% \item $\max_{\curlies{\vec{\theta},\vec{\phi}}}\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$: maximize `Free Energy' as a variational lower bound.
@@ -88,6 +89,6 @@
 \label{sub:experiments}
 
 \begin{itemize}
-	\item Reconstruct HR images using the VAE with two fully-connected neural network with $200$ hidden neurons each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
+	\item Reconstruct HR images using the VAE with two fully-connected neural networks with $200$ hidden neurons each for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
 	\item Compare reconstructions using VAE with a bicubic interpoltation upscaling.
 \end{itemize}

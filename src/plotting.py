@@ -38,7 +38,7 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [10, 30, 50]
+    latent_sizes = [5, 30, 50]
     # latent_sizes = [2, 5, 10, 30, 50, 100]
     # latent_sizes = [2, 5, 10, 30]
     N_epochs = 50
@@ -345,8 +345,8 @@ def main():
             row_alignment = {"horizontalalignment": "right", "verticalalignment": "center"}
             column_alignment = {"horizontalalignment": "center", "verticalalignment": "baseline", "size": "x-large"}
             
-            axis.text(-5, 0.5 * H, "Originals", fontdict = row_alignment)
-            axis.text(-5, 1.5 * H, "Downsampled", fontdict = row_alignment)
+            axis.text(-5, 0.5 * H, "Originals\nBinarised", fontdict = row_alignment)
+            axis.text(-5, 1.5 * H, "Downsampled\nMean filter", fontdict = row_alignment)
             axis.text(-5, 2.5 * H, "Upscaled\nBicubic", fontdict = row_alignment)
             axis.text(-5, 3.5 * H, "Upscaled\nVAE", fontdict = row_alignment)
             
