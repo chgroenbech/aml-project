@@ -1,32 +1,50 @@
-\usetikzlibrary{positioning}
+\usetikzlibrary{arrows, positioning, shapes.geometric, decorations.pathreplacing} 
+\tikzset{
+    %Define standard arrow tip
+    >=stealth'
+    }
 \begin{tikzpicture}[x = 1cm, y = 1cm, thick,
 		image/.style={rectangle, draw, inner sep = 0pt, minimum size = 2 cm},
 		network/.style={rectangle, draw, inner sep = 0pt, minimum size = 2 cm},
-		arrow/.style={ ->, shorten <= 1 mm, shorten >= 1 mm}
+		arrow/.style={ ->, thick, shorten <= 1 mm, shorten >= 1 mm}, 
+		stochastic/.style={diamond, draw, inner sep = 0pt, minimum size = 2cm},
+		node distance = 1 cm
 	]
 	
-	\node[image, minimum size = 2 cm] (HR) at (0, 0) {};
-	\node[below = of HR] {HR image};
+	\node[image, minimum size = 2 cm] (HR) at (0, 0) {\includegraphics[width = 2cm]{example_original_ds2_l30_e50}};
+	\node[below = .5cm of HR] (xHR) {$\vec{x}_{HR}$};
+	\node[above = 0.1cm of HR] (xdim_HR) {28};
+	\node[left = 0.1cm of HR] (ydim_HR) {28};
+
+	\node[image, minimum size = 1 cm, right = of HR] (LR) {\includegraphics[width= 1cm]{example_downsampled_ds2_l30_e50}};
+	\node[below = .5cm of LR] (xLR) {$\vec{x}_{LR}$};
+	\node[above = 0.1cm of LR] (xdim_LR) {28/d};
+
+	\node[network, minimum size = 1.5 cm, right = of LR] (encoder) {NN};
+
+	\node[stochastic, minimum size = 0.75 cm, right = of encoder] (latent) {$\vec{z}$};
 	
-	\node[image, minimum size = 1 cm, right = 1.5 cm of HR] (LR) {};
-	\node[below = of LR] {LR image};
-	
-	\node[network, minimum size = 1.5 cm, right = 1.5 cm of LR] (encoder) {};
-	\node[below = of encoder] {Encoder};
-	
-	\node[network, minimum size = 0.5 cm, right = 1.5 cm of encoder] (latent) {};
-	\node[below = of latent] {Latent space};
-	
-	\node[network, minimum size = 1.5 cm, right = 1.5 cm of latent] (decoder) {};
-	\node[below = of decoder] {Decoder};
-	
-	\node[image, minimum size = 2 cm, right = 1.5 cm of decoder] (reconstruction) {};
-	\node[below = of reconstruction] {Reconstruction};
-	
+	\node[network, minimum size = 1.5 cm, right = of latent] (decoder) {NN};
+		
+	\node[image, minimum size = 3 cm, right = of decoder] (reconstruction) {\includegraphics[width= 3cm]{example_reconstructed_ds2_l30_e50}};
+	\node[below = .5cm of reconstruction] (xHR_Rec) {$\tilde{\vec{x}}_{HR}$};
+
 	\draw[arrow] (HR) -- (LR);
 	\draw[arrow] (LR) -- (encoder);
 	\draw[arrow] (encoder) -- (latent);
 	\draw[arrow] (latent) -- (decoder);
 	\draw[arrow] (decoder) -- (reconstruction);
 	
+	\node[above = 1.5 cm of LR.west] (encoder start) {};
+	\node[above = 1.5 cm of latent.center] (encoder end) {};
+	\draw [decorate, decoration = {brace, amplitude = 5pt}]
+	(encoder start) -- (encoder end) node [midway, above]
+	{Encoder: $\enc{\vec{z}|\vec{x}} \simeq \dec{\vec{z}|\vec{x}}$};
+
+	\node[above = 1.5 cm of latent.center] (decoder start) {};
+	\node[above = 1.5 cm of reconstruction.east] (decoder end) {};
+	\draw [decorate, decoration={brace, amplitude = 5pt}]
+	(decoder start) -- (decoder end) node [midway, above] 
+	{Decoder: $\dec{\vec{x}|\vec{z}}$};
+
 \end{tikzpicture}

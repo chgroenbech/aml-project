@@ -1,10 +1,41 @@
-\section{Method}
+\section{Materials and methods}
 \label{sec:method}
 
-We consider the MNIST dataset \cite{MNIST}, $\vec{X} = \curlies{\vec{X}\order{i}}^N_{i=1}$, of i.i.d. images of handwritten digits. \dots
+\subsection{Data}
+\label{sub:data}
+\begin{itemize}
+	\item \textbf{MNIST dataset} \cite{MNIST}: i.i.d. images, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, of handwritten digits:
+	\begin{itemize}
+		\item $28 \times 28$ pixels with one channel.
+		\item \textbf{Training set} (including validation set) of 60000 images.
+		\item \textbf{Test set} of 10000 images.
+	\end{itemize}
+	\item $\vec{x} = \vec{X}\order{i}$ for simplicity.
+\end{itemize}
+
+\subsection{Model}
+\label{sub:the_model}
+
+\begin{figure*}
+	\centering
+	\input{model.tex}
+	\caption{Diagram of model. Originals, $\vec{x}\idx{HR}$, are binarised and downsampled, $\vec{x}\idx{LR}$. Reconstructions, $\tilde{\vec{x}}\idx{HR}$, are they results of the VAE.}
+	\label{fig:diagram}
+\end{figure*}
 
 For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution.\dots 
 %TODO: Skriv mere beskrivelse af modellen og indsæt model diagram
+
+\subsubsection{Preprocessing of HR images}
+\label{ssub:downsampling}
+
+\begin{itemize}
+	\item Binarised using Bernoulli sampling.
+	\item Downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
+\end{itemize}
+
+\subsubsection{Variational auto-encoder}
+\label{ssub:vae}
 
 Using mean-field variational Bayes \cite{Kingma2013}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to redo the probabilistic process of producing a digit pixel for pixel. \\  
 The model is trained based on a per-pixel loss-function derived from the marginal log-likelihood of each datapoint, $i$:
@@ -38,10 +69,13 @@ Since the KL-divergence is non-negative the second term (``free energy'') works 
 
 Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the . When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$
 
-Differentiation of L
-Reparameretization trick
-Output parameters (mu and sigma)
+% Differentiation of L
+% Reparameretization trick
+% Output parameters (mu and sigma)
 
 % TODO: Add algorithm from Kingma13: Algorithm 1 Minibatch version of the Auto-Encoding VB (AEVB) algorithm.
 
-
+\begin{itemize}
+	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions}. $L = 1$ for the sampling of $\vec{z}$ as Kingma et al \cite{Kingma2013}.
+	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
+\end{itemize}

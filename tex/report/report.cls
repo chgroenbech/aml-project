@@ -34,8 +34,7 @@
 
 % Load packages for scientific articles
 \usepackage{siunitx}					% SI units
-\usepackage[square, numbers]{natbib}	% Natural science references
-\bibliographystyle{ieeetr}
+% \usepackage[square, numbers]{natbib}	% Natural science references
 
 % Load miscellaneous packgaes
 \usepackage{xcolor}						% Extended package for colouring
@@ -185,6 +184,7 @@
 \newcommand{\rephrase}[1]{\textcolor{orange}{#1}}
 
 % References
+\bibliographystyle{IEEEtran}
 \addto\captionsbritish{
 	\renewcommand\bibname{References}
 	\renewcommand{\bibsection}{

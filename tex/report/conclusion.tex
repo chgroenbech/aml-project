@@ -1,4 +1,14 @@
-\section{Conclusion}
-\label{sec:conclusion}
+\section{conclusion}
 
-\lipsum[8-9]
+\begin{itemize}
+	\item Better reconstructions than with bicubic interpolation, especially for $d = 4$.
+	\item VAE is close to independent of downsampling for the values investigated.
+	\item Future work:
+	\begin{itemize}
+		\item Per-feature loss function as Johnson et al \cite{Johnson16}, instead of per-pixel loss.
+		\item Semi-supervised VAE for separating digits and style \cite{Kingma2014}.
+		\item Convolutional neural networks for encoder and decoder.
+		\item Low-pass filter for downsampling.
+		\item Other dataset, e.g. the Frey Face dataset \cite{Frey} using continuous values. 
+	\end{itemize}
+\end{itemize}
