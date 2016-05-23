@@ -23,14 +23,15 @@
 	\label{fig:diagram}
 \end{figure*}
 
-For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution.\dots 
-%TODO: Skriv mere beskrivelse af modellen og indsæt model diagram
+For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution\dots 
+\change{Finish description of model. See method.tex in poster directory.}
 
 \subsubsection{Preprocessing of HR images}
 \label{ssub:downsampling}
 
 \begin{itemize}
 	\item Binarised using Bernoulli sampling.
+	\change{Mention robustness to variations because of this.}
 	\item Downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
 \end{itemize}
 
@@ -67,7 +68,15 @@ Since the KL-divergence is non-negative the second term (``free energy'') works 
 	\end{split} 
 \end{gather}
 
-Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the . When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$
+Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the. When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$.
+
+\change{Write that the VAE reduces to a normal auto-encoder when $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ is left out.}
+
+\change{Write about differences in distribution for continuous (Gaussian) and binary (Bernoulli) data.}
+
+\change{Write about the Stochastic Gradient Variational Bayes method in short.}
+
+\change{Write that output is the mean of the Bernouilli distribution.}
 
 % Differentiation of L
 % Reparameretization trick
@@ -75,7 +84,13 @@ Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby
 
 % TODO: Add algorithm from Kingma13: Algorithm 1 Minibatch version of the Auto-Encoding VB (AEVB) algorithm.
 
+\subsection{Experiments}
+\label{sub:experiments}
+
+\change{Write as text and clarify choices for each hyperparameter.}
+
 \begin{itemize}
 	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions}. $L = 1$ for the sampling of $\vec{z}$ as Kingma et al \cite{Kingma2013}.
+	\change{Add batch size.}
 	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
 \end{itemize}

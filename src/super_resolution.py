@@ -194,6 +194,7 @@ def main():
     
         # Parameters to train
         parameters = get_all_params([l_z, l_dec_x_mu], trainable = True)
+        # parameters = get_all_params([l_z, l_dec_x_mu, l_dec_x_log_var], trainable = True)
         print("Parameters that will be trained:")
         for parameter in parameters:
             print("{}: {}".format(parameter, parameter.get_value().shape))
