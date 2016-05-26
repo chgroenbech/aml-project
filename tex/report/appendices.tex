@@ -1,22 +1,24 @@
 \chapter{Visualisations}
 \label{sec:visualisations}
 
-Using a latent size of $N_{\vec{z}} = 2$, the latent space is visualised for both a downsampling factor of $2$ and $4$ in figure
+Using a latent size of $N_{\vec{z}} = 2$, the latent space is visualised for both a downsampling factor of $2$ and $4$ in Figure~\ref{fig:manifold}.
 
-\begin{figure}
+\begin{figure*}
     \centering
+    \hspace*{\fill}
     \subbottom[$d = 2$.\label{fig:manifold:downsampling:2}]{
-        \includegraphics[width=\linewidth]{manifold_bs_ds2_l2_e50}
+        \includegraphics[width=.45\textwidth]{manifold_bs_ds2_l2_e50}
     }
-    \\
+    \hfill
     \subbottom[$d = 4$.\label{fig:manifold:downsampling:4}]{
-        \includegraphics[width=\linewidth]{manifold_bs_ds4_l2_e50}
+        \includegraphics[width=.45\textwidth]{manifold_bs_ds4_l2_e50}
     }
+    \hspace*{\fill}
     \caption{The learned data manifold for our model latent size of $N_{\vec{z}} = 2$ for both downsampling factors. \rephrase{Since the prior of the latent space is Gaussian, linearly spaced coordinates on the unit square were transformed through the inverse CDF of the Gaussian to produce values of the latent variables z. For each of these values z, we plotted the corresponding generative $\dec{x|z}$ with the learned parameters $\theta$.}}
     \label{fig:manifold}
-\end{figure} 
+\end{figure*}
 
-\change{Add homemade numbers.}
+% The method was also applied to digits made and binarised by hand as well as made using handwriting typefaces
 
 \chapter{Implementation}
 \label{cha:implementation}
