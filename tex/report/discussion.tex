@@ -1,12 +1,12 @@
 \section{Discussion}
 \label{sec:discussion}
 
-The variational lower bound for $d = 2$ is comparable to the one for no downsampling (except in the first few epochs) as seen in Figure~\ref{fig:learning_curves}, whereas it is consistently worse for $d = 4$.
+The variational lower bound for $d = 2$ is comparable to the one for no downsampling after approximately $20$ iterations as seen in Figure~\ref{fig:learning_curves:downsampling_factor}, whereas it is consistently worse for $d = 4$, which makes sense the resolution is $d^2 = 16$ times as low for $d = 4$ compared to only $d^2 = 4$ times as low for $d = 2$.
+Varying the latent size, it is found that a latent size above $10$ does not yield a better variational lower bound as seen in Figure~\ref{fig:learning_curves:latent_size}, and for $N_{\vec{z}} \geq 30$ the variational lower bound is the same.
 
-The test variational lower bound, shown in Table~\ref{tab:variational_lower_bound}, gets significantly lower from a latent size of $5$ to $10$, but it does not get much better for higher latent sizes. The best value is achieved for $N_{\vec{z}} = 30$.
+Compared to variational lower bounds with no downsampling, the VAE for $d = 2$ is markedly better than the one for $d = 4$: $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{1}{nats}$ compared to $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{10}{nats}$.
+But the VAE reconstructions in Figure~\ref{fig:samples} for the two downsampling factors are visually comparable for the thicker numbers, but less so for the thinner ones, so the VAE is not completely robust towards the losses in resolution.
 
-Compared to variational lower bounds with no downsampling, the VAE for $d = 2$ is markedly better than the one for $d = 4$: $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx 1$ compared to $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx 10$, but looking at Figure~\ref{fig:samples} the reconstructions are comparable, i.e.\ the VAE is close to robust towards the losses in resolution.
-\change{Use nat as unit}
-\change{Use `from a visual aspect' when comparing reconstructions}
-
-Comparing the reconstructions using bicubic interpolation and the VAE, the VAE gives somewhat better, albeit smoother reconstructions for $d = 2$, whereas there is a remarkable difference in favour of the VAE for $d = 4$.
+Comparing the reconstructions using bicubic interpolation and the VAE visually, the VAE gives better results for $d = 2$.
+While the bicubic interpolation reconstructs the binarised versions, the VAE reconstructs succeeds in capturing the original forms.
+For $d = 4$, this gives a remarkable difference in favour of the VAE.
