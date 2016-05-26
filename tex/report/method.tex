@@ -24,11 +24,13 @@
 \end{figure*}
 
 For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution\dots 
-\change{Finish description of model. See method.tex in poster directory.}
+\change{Finish description of model. See method.tex in poster directory.} \\
+
 
 \subsubsection{Preprocessing of HR images}
 \label{ssub:downsampling}
 
+\change{Rewrite this to text.}
 \begin{itemize}
 	\item Binarised using Bernoulli sampling.
 	\change{Mention robustness to variations because of this.}
@@ -39,7 +41,15 @@ For the reconstruction of high-resolution (HR) digits from low-resolution (LR) d
 \label{ssub:vae}
 
 Using mean-field variational Bayes \cite{Kingma2013}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to redo the probabilistic process of producing a digit pixel for pixel. \\  
-The model is trained based on a per-pixel loss-function derived from the marginal log-likelihood of each datapoint, $i$:
+
+\change{Rewrite this to text.}
+\begin{itemize}
+	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ -- Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
+	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given $\vec{z}$
+	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for $\dec{\vec{x}|\vec{z}}$.	
+\end{itemize}
+
+The model parameters are trained based on a per-pixel loss-function derived from the marginal log-likelihood of each datapoint, $i$:
 \begin{equation}
 	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}} 
 \end{equation}
@@ -68,6 +78,16 @@ Since the KL-divergence is non-negative the second term (``free energy'') works 
 	\end{split} 
 \end{gather}
 
+\change{Rewrite this to text.}
+\begin{itemize}
+		\item The \textbf{first term} is the \textbf{regularisation} for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}$. It has a differentiable analytical solution.
+		\item The \textbf{second term} is the expected negative \textbf{reconstruction error}. This has a differentiable Monte Carlo estimate:
+		\begin{equation*}
+			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
+		\end{equation*}
+		\item A \textbf{reparameterisation trick} is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$.
+\end{itemize}
+
 Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby minimizes the $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ bringing the. When $D_{KL}\rightarrow 0$ the approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$.
 
 \change{Write that the VAE reduces to a normal auto-encoder when $D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right)$ is left out.}
@@ -75,6 +95,9 @@ Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby
 \change{Write about differences in distribution for continuous (Gaussian) and binary (Bernoulli) data.}
 
 \change{Write about the Stochastic Gradient Variational Bayes method in short.}
+\begin{itemize}
+	\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
+\end{itemize}
 
 \change{Write that output is the mean of the Bernouilli distribution.}
 
