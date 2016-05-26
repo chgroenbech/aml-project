@@ -47,7 +47,8 @@ where it is decomposed like for the EM-algorithm and variational inference \cite
 	D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}} = -\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
 \end{equation}
 
-Since the KL-divergence is non-negative the second term (``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ , so maximizing the lower bound wrt. the model parameters we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$ and thereby pushed the KL-divergence towards zero bringing approximated variational distribution $\enc{\vec{z}|\vec{x}}\rightarrow \dec{\vec{z}|\vec{x}}$ closer to the true posterior. For training purposes the lower bound is decomposed and rewritten:
+Since the KL-divergence is non-negative the second term (``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ , so maximizing the lower bound wrt. the model parameters we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$ and thereby pushes the KL-divergence towards zero bringing approximated variational distribution closer to the true posterior.
+The lower bound can be decomposed and rewritten by:
 
 \begin{gather}
 	\begin{split}
@@ -55,23 +56,22 @@ Since the KL-divergence is non-negative the second term (``free energy'') works 
 		& = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\ 
 		& = \E_{\enc{\vec{z}|\vec{x}}} \brackets{- \log \enc{\vec{z}|\vec{x}} + \log \dec{\vec{x},\vec{z}} } 
 		\\
-		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }   	
+		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }    	
 	\end{split} 
 \end{gather}
-where the first term is another KL-divergence acting as a regularisation for $\vec{\phi}$ keeping the approximate posterior $\enc{\vec{z}|\vec{x}}$ close to the prior $\dec{\vec{z}}=\mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on training data. This important KL-term has a differentiable analytical evaluation:
-\begin{equation}
-	-D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } = \frac{1}{2}\sum^J_{j+1}\parens{1 + \log \sigma_j ^2 - \mu_j^2 - \sigma_j^2}
-\end{equation}
-The second term is the expected negative reconstruction error. This has a differentiable Monte Carlo estimate:
-		\begin{equation}
-			\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
-		\end{equation}
-		where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(0,\vec{I})$.
+where the first term is another KL-divergence acting as a regularisation term for $\vec{\phi}$ enforcing $\enc{\vec{z}|\vec{x}}$ to be similar to the prior $\dec{\vec{z}}=\mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on training data.
+% \begin{equation}
+% 	-D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } = \frac{1}{2}\sum^J_{j+1}\parens{1 + \log \sigma_j ^2 - \mu_j^2 - \sigma_j^2}
+% \end{equation}
 
-\change{Write about the Stochastic Gradient Variational Bayes method in short.}
-\begin{itemize}
-	\item \textbf{Minibatch estimate}: $\frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$
-\end{itemize}
+The second term is the expected negative per-pixel reconstruction error, which has a differentiable Monte Carlo estimate:
+\begin{equation}
+	\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
+\end{equation}
+where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(\vec{0},\vec{I})$.
+
+Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL-term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$. From this we a get minibatch estimate $\tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X^M}} = \frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ averaging over a subset $\vec{X}^M = \set{\vec{X}\order{i}}^M_{i=1}$. 
+For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ are found using \texttt{Theano.grad()} and the parameters $\phi$ and $\theta$ (weights in the neural networks) updated using the \texttt{ADAM}-method \cite{Kingma2014b} for each minibatch. 
 
 \change{Write that output is the mean of the Bernouilli distribution.}
 
@@ -85,7 +85,7 @@ The second term is the expected negative reconstruction error. This has a differ
 \label{sub:experiments}
 
 \change{Write as text and clarify choices for each hyperparameter.}
-
+\change{Add reference to our github repository.}
 \begin{itemize}
 	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions}. $L = 1$ for the sampling of $\vec{z}$ as Kingma et al \cite{Kingma2013}.
 	\change{Add batch size.}
