@@ -42,7 +42,7 @@
 \usepackage{xspace}						% Add space after text macros with \xspace
 \usepackage{paralist}					% Lists in paragraphs
 \usepackage{afterpage}
-\usepackage{flafter}
+% \usepackage{flafter}
 \usepackage{grffile}
 \usepackage{keyval}
 \usepackage{balance}					% Balance text columns

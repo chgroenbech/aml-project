@@ -5,7 +5,8 @@ The variational lower bound for $d = 2$ is comparable to the one for no downsamp
 Varying the latent size, it is found that a latent size above $10$ does not yield a better variational lower bound as seen in Figure~\ref{fig:learning_curves:latent_size}, and for $N_{\vec{z}} \geq 30$ the variational lower bound is the same.
 
 Compared to variational lower bounds with no downsampling, the VAE for $d = 2$ is markedly better than the one for $d = 4$: $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{1}{nats}$ compared to $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{10}{nats}$.
-But the VAE reconstructions in Figure~\ref{fig:samples} for the two downsampling factors are visually comparable for the thicker numbers, but less so for the thinner ones, so the VAE is not completely robust towards the losses in resolution.
+But the VAE reconstructions in Figure~\ref{fig:samples} for the two downsampling factors are visually comparable for the thicker numbers, but less so for the thinner ones, because the Bernoulli sampling is more likely break up the strokes making up the numbers for these.
+So the VAE is close to, but not completely robust towards the losses in resolution.
 
 Comparing the reconstructions using bicubic interpolation and the VAE visually, the VAE gives better results for $d = 2$.
 While the bicubic interpolation reconstructs the binarised versions, the VAE reconstructs succeeds in capturing the original forms.
