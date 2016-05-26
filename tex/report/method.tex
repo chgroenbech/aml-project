@@ -16,7 +16,7 @@ Generalizing the VAE model from a single image to all, we write $\vec{x} = \vec{
 \begin{figure*}
 	\centering
 	\input{model.tex}
-	\caption{Diagram of model. Originals, $\vec{x}\idx{HR}$, are binarised and downsampled, $\vec{x}\idx{LR}$. Reconstructions, $\tilde{\vec{x}}\idx{HR}$, are they results of the VAE.}
+	\caption{Diagram of model. Originals $\vec{x}$ are binarised to $\vec{x}\idx{HR}$ and downsampled to $\vec{x}\idx{LR}$. Reconstructions, $\tilde{\vec{x}}\idx{HR}$, are the resulting output of the VAE.}
 	\label{fig:diagram}
 \end{figure*}
 
@@ -84,12 +84,11 @@ For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\thet
 \label{sub:experiments}
 
 \change{Write as text and clarify choices for each hyperparameter.}
-\change{Add reference to our github repository.}
 \begin{itemize}
 	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions}. $L = 1$ for the sampling of $\vec{z}$ as Kingma et al \cite{Kingma2013}.
 	\change{Add batch size.}
 	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
 	\item Learning rate of $\num{e-3}$.
 \end{itemize}
-Our Python implementation,\texttt{super_resolution.py} \footnote{Available at \url{https://github.com/chgroenbech/aml-project}.}, of the model are made using the \texttt{Theano}, \texttt{Lasagne} and \texttt{Parmesan} packages. 
+Our Python implementation of the model, \texttt{super\_resolution.py} \footnote{Available at \url{https://github.com/chgroenbech/aml-project}.}, are made using the \texttt{Theano}, \texttt{Lasagne} and \texttt{Parmesan} packages. 
 
