@@ -3,7 +3,8 @@
 
 \subsection{Data}
 \label{sub:data}
-We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evaluate the performance on reconstructions of the 10000 images test set. 
+Our model is learned for the MNIST dataset \cite{MNIST} of black and white handwritten digits $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, with a training set of size $N_{val} + N_{train} = 60,000$ and a test set of size $N_{test}=10,000$.  
+
 For i.i.d. data like this, each pixel are assumed to follow a marginal joint probability distribution, which makes it possible to decompose the log-likelihood of each datapoint, $i$, in a sum $\log \dec{\vec{X}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}}$. 
 
 
@@ -34,7 +35,7 @@ $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi
 
 Given the sampled $\vec{z}$ the decoder can generate a reconstruction $\tilde{\vec{x}}_{HR}$, where each pixel are assumed to be drawn from a Bernoulli distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ for binarised $\vec{x}$ (our case) or from a normal distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{N}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z}),\vec{\sigma}^2_\theta(\vec{z})}$ for continuous $\vec{x}$ like f.ex. face images.
 
-The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative Bernoulli distribution $\dec{\vec{x}|\vec{z}}$. 
+The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative Bernoulli distribution $\dec{\vec{x}|\vec{z}}$. Instead of sampling from $\dec{\vec{x}|\vec{z}}$ we just draw $x=\vec{\mu}_\theta(\vec{z})$ as the most probable pixel-values for the reconstruction. 
 
 This is model selection by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as used by \cite{Kingma2013}. 
  
@@ -72,8 +73,6 @@ where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi 
 
 Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL-term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$. From this we a get minibatch estimate $\tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X^M}} = \frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ averaging over a subset $\vec{X}^M = \set{\vec{X}\order{i}}^M_{i=1}$. 
 For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ are found using \texttt{Theano.grad()} and the parameters $\phi$ and $\theta$ (weights in the neural networks) updated using the \texttt{ADAM}-method \cite{Kingma2014b} for each minibatch. 
-
-\change{Write that output is the mean of the Bernouilli distribution.}
 
 % Differentiation of L
 % Reparameretization trick
