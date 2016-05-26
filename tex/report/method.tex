@@ -3,8 +3,12 @@
 
 \subsection{Data}
 \label{sub:data}
-We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evauluate the performance on reconstructions of the 10000 images test set.
-We write each image vector as $\vec{x} = \vec{X}\order{i}$ for simplicity in the following equations.
+We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evauluate the performance on reconstructions of the 10000 images test set. 
+For i.i.d. data like this, each pixel are assumed to follow a marginal joint probability distribution, which makes it possible to decompose the log-likelihood of each datapoint, $i$, in a sum:
+\begin{equation}
+	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}} 
+\end{equation}are 
+Generalizing the VAE model from a single image to all, we write $\vec{x} = \vec{X}\order{i}$ for uncluttered and simple notation in the following equations.
 
 \subsection{Model}
 \label{sub:the_model}
@@ -16,40 +20,25 @@ We write each image vector as $\vec{x} = \vec{X}\order{i}$ for simplicity in the
 	\label{fig:diagram}
 \end{figure*}
 
-For the reconstruction of high-resolution (HR) digits from low-resolution (LR) digits in the MNIST dataset, our model assume the same underlying data generating process behind the production of digits to infer the same structure between them. Each variable in $\vec{X}$ are assumed to be drawn from a normal distribution\dots 
-\change{Finish description of model. See method.tex in poster directory.} \\
-
-
-\subsubsection{Preprocessing of HR images}
-\label{ssub:downsampling}
-
-\change{Rewrite this to text.}
-\begin{itemize}
-	\item Binarised using Bernoulli sampling.
-	\change{Mention robustness to variations because of this.}
-	\item Downsampled by a factor of $d$ using \textbf{mean filter} (pooling layer).
-\end{itemize}
+To test the performance and robustness of a VAE when in lack of variables, which is the case for a SR-task, we made a model as seen in \ref{fig:diagram}. It is generating HR images, $\tilde{\vec{x}}_{HR}$ as close to the binarised original images $\vec{x}_{HR}$ from downsampled LR images $\vec{x}_{LR}$. $\vec{x}_{HR}$ are binarised using Bernoulli sampling and then downsampled to $\vec{x}_{LR}$ by a factor of $d$ using a mean filter (pooling layer).
 
 \subsubsection{Variational auto-encoder}
 \label{ssub:vae}
+The VAE make reconstructions from a underlying probalistic data generating process inferring the same structure between similar digits. The similarity lies in the latent space, $\vec{z}$, which is here the stochastic layer seen in the center of the model. 
 
-Using mean-field variational Bayes \cite{Kingma2013}, we build a generative model with an approximated decoding posterior distribution, $\enc{\vec{z}|\vec{X}}$ mapping the observed variables $\vec{X}$ into the unobserved latent variables $\vec{z}$. The generative part of the model is then using the conditional likelihood $\dec{\vec{X},\vec{z}}$ to redo the probabilistic process of producing a digit pixel for pixel. \\  
+The input $\vec{x}_{LR}$ is mapped to the latent space through the encoder sampling from a normal distribution
+$\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$, where $\enc{\vec{z}|\vec{x}}$ is a variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$. 
 
-\change{Rewrite this to text.}
-\begin{itemize}
-	\item \textbf{Encoding}: $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$ -- Unobserved latent variable generated from the variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
-	\item \textbf{Decoding}: $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ -- Generate image from conditional Bernoulli distribution given $\vec{z}$
-	\item \textbf{Neural networks} output distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for $\dec{\vec{x}|\vec{z}}$.	
-\end{itemize}
+Given the sampled $\vec{z}$ the decoder can generate a reconstruction $\tilde{\vec{x}}_{HR}$, where each pixel are assumed to be drawn from a Bernoulli distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ for binarised $\vec{x}$ (our case) or from a normal distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{N}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z}),\vec{\sigma}^2_\theta(\vec{z})}$ for continuous $\vec{x}$ like f.ex. face images.
 
-The model parameters are trained based on a per-pixel loss-function derived from the marginal log-likelihood of each datapoint, $i$:
-\begin{equation}
-	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}} 
-\end{equation}
-From now on we denote $\vec{X}\order{i} = \vec{x}$ for shorter and uncluttered notation.
+The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative Bernoulli distribution $\dec{\vec{x}|\vec{z}}$. 
+
+This is model selection by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as used by \cite{Kingma2013}. 
+ 
 The marginal log-likelihood can be decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}:
+To learn the models variational parameters $\phi$ and generative parameters $\theta$ jointly we obtain a per-pixel training criterion from the variational lower bound $\mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)$ derived from the mean-field approximation to the marginal log-likelihood:
 \begin{equation}
-	\log \dec{\vec{X}\order{i}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
+	\log \dec{\vec{x}} = D_{KL}\left( \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}\right) + \mathcal{L}\left(\vec{\theta},\vec{\phi};\vec{x}\right)
 \end{equation} 
 Here the first term is the Kullback-Leibler divergence, which is a non-negative entropy measure of how much the 2 distributions differ.
 \begin{equation}
