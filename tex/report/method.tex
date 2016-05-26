@@ -15,7 +15,7 @@ For i.i.d. data like this, each pixel are assumed to follow a marginal joint pro
 \subsection{Variational auto-encoder}
 \label{sub:vae}
 
-The VAE makes reconstructions from a underlying probalistic data generating process inferring the same structure between similar digits. The similarity lies in the latent space, $\vec{z}$, which is the stochastic layer seen in the center of the model in Figure~\ref{fig:diagram}. 
+The VAE makes reconstructions from a underlying probabilistic data generating process inferring the same structure between similar digits. The similarity lies in the latent space, $\vec{z}$, which is the stochastic layer seen in the centre of the model in Figure~\ref{fig:diagram}. 
 
 The input $\vec{x}_{LR}$ is mapped to the latent space through the encoder sampling from a normal distribution
 $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$, where $\enc{\vec{z}|\vec{x}}$ is a variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
@@ -36,7 +36,7 @@ where it is decomposed as for the EM-algorithm and variational inference \cite[\
     D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}|\vec{x}}} = \int  \enc{\vec{z}|\vec{x}} \log \parens*{ \frac{\enc{\vec{z}|\vec{x}}}{\dec{\vec{x}|\vec{z}}} } \D{\vec{z}} .
 \end{equation}
 
-Since the KL divergence is non-negative, the second term (the ``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$, so maximizing the lower bound with regards to the model parameters, we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$, thereby pushing the KL divergence towards zero and bringing the approximated variational distribution closer to the true posterior.
+Since the KL divergence is non-negative, the second term (the ``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$, so maximising the lower bound with regards to the model parameters, we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$, thereby pushing the KL divergence towards zero and bringing the approximated variational distribution closer to the true posterior.
 The lower bound can be decomposed and rewritten as:
 \begin{gather}
 	\begin{split}
@@ -63,7 +63,7 @@ multiplication.}
 
 Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$.
 
-We use minibatch gradient descent for obtaining the negative gradients $-\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{M}}$, which are used for updating the parameters $\phi$ and $\theta$ with the Adam method \cite{Kingma2014b} maximizing the variational lower bound. 
+We use mini-batch gradient descent for obtaining the negative gradients $-\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{M}}$, which are used for updating the parameters $\phi$ and $\theta$ with the Adam method \cite{Kingma2014b} maximising the variational lower bound. 
 
 % Differentiation of L
 % Reparameretization trick

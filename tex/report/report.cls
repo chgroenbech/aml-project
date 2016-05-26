@@ -45,7 +45,7 @@
 % \usepackage{flafter}
 \usepackage{grffile}
 \usepackage{keyval}
-\usepackage{balance}					% Balance text columns
+% \usepackage{balance}                    % Balance text columns
 \usepackage{flushend}
 \usepackage{tikz}
 
@@ -200,7 +200,7 @@
 		\prebibhook
 	}
 }
-\renewcommand{\postbibhook}{\balance}
+% \renewcommand{\postbibhook}{\balance}
 
 % Text formatting
 \newcommand{\newterm}[1]{\textbf{#1}}
