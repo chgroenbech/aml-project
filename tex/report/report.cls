@@ -42,11 +42,11 @@
 \usepackage{xspace}						% Add space after text macros with \xspace
 \usepackage{paralist}					% Lists in paragraphs
 \usepackage{afterpage}
-% \usepackage{flafter}
+\usepackage{flafter}
 \usepackage{grffile}
 \usepackage{keyval}
-% \usepackage{balance}                    % Balance text columns
-\usepackage{flushend}
+\usepackage{balance}                    % Balance text columns
+% \usepackage{flushend}
 \usepackage{tikz}
 
 % Load cross reference packages
@@ -157,6 +157,7 @@
 \setsubsecheadstyle{\flushleft\bfseries}
 \setsubsubsecheadstyle{\flushleft\itshape}
 \setsechook{\setsecnumformat{\csname the##1\endcsname.\enspace}}
+\addtodef{\appendix}{}{\def\thesection{\alph{section}}\nobalance}
 
 % ToC
 \settocdepth{subparagraph}
@@ -200,7 +201,7 @@
 		\prebibhook
 	}
 }
-% \renewcommand{\postbibhook}{\balance}
+\renewcommand{\postbibhook}{\balance}
 
 % Text formatting
 \newcommand{\newterm}[1]{\textbf{#1}}
