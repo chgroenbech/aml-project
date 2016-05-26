@@ -59,7 +59,7 @@ We read the paper on semi-supervised variational auto-encoding (Kingma et al (20
 
 We continued working on getting convolutional neural networks to work with the variational auto-encoder. Christopher also reworked the implementation to be more clear and concise as well as enabling multiple inputs (low- and high-resolutions).
 
-### Week 7: 22 April -- 28 April ###
+### Week 7: 22--28 April ###
 
 Maximillian used our implementation to investigate different latent sizes, learning rates, and number of epochs. He also "drew" binarised, low-resolution numbers as text files for testing. Christopher continued work on the convolutional neural networks.
 
