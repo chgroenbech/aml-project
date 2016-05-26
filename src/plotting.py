@@ -134,14 +134,14 @@ def main():
             if downsampling_factor > 1:
                 reconstructions_set.append({"data": reconstructions, "downsampling factor": downsampling_factor})
             
-            # x = reconstructions["originals"]
             x = results["originals"]
+            x_binarised = reconstructions["originals"]
             x_LR = reconstructions["downsampled"]
             x_reconstructed = reconstructions["reconstructions"]
     
             N_reconstructions = min(N_reconstructions_max, len(x_reconstructed))
     
-            image = numpy.zeros((H * 4, W * N_reconstructions))
+            image = numpy.zeros((H * 5, W * N_reconstructions))
 
             for i in range(N_reconstructions):
             
@@ -150,18 +150,23 @@ def main():
                 y_a, y_b = i * W, (i + 1) * W
                 image[x_a: x_b, y_a: y_b] = image_i
                 
+                image_i_binarised = x_binarised[i].reshape((H, W))
+                x_bin_a, x_bin_b = 1 * H, 2 * H
+                y_bin_a, y_bin_b = i * W, (i + 1) * W
+                image[x_bin_a: x_bin_b, y_bin_a: y_bin_b] = image_i_binarised
+                
                 image_i_LR = x_LR[i].reshape((h, w))
-                x_LR_a, x_LR_b = int(1.5 * H - numpy.ceil(h/2.)), int(1.5 * H + numpy.floor(h/2))
+                x_LR_a, x_LR_b = int(2.5 * H - numpy.ceil(h/2.)), int(2.5 * H + numpy.floor(h/2))
                 y_LR_a, y_LR_b = int((i + 0.5) * W - numpy.ceil(w/2)), int((i + 0.5) * W + numpy.floor(w/2))
                 image[x_LR_a: x_LR_b, y_LR_a: y_LR_b] = image_i_LR
                 
                 image_i_upscaled = imresize(image_i_LR, (H, W), interp = "bicubic") / 255.
-                x_up_a, x_up_b = 2 * H, 3 * H
+                x_up_a, x_up_b = 3 * H, 4 * H
                 y_up_a, y_up_b = i * W, (i + 1) * W
                 image[x_up_a: x_up_b, y_up_a: y_up_b] = image_i_upscaled
                 
                 image_i_reconstructed = x_reconstructed[i].reshape((H, W))
-                x_recon_a, x_recon_b = 3 * H, 4 * H
+                x_recon_a, x_recon_b = 4 * H, 5 * H
                 y_recon_a, y_recon_b = i * W, (i + 1) * W
                 image[x_recon_a: x_recon_b, y_recon_a: y_recon_b] = image_i_reconstructed
             
@@ -173,9 +178,10 @@ def main():
             alignment = {"horizontalalignment": "right", "verticalalignment": "center"}
             
             axis.text(-5, 0.5 * H, "Originals", fontdict = alignment)
-            axis.text(-5, 1.5 * H, "Downsampled", fontdict = alignment)
-            axis.text(-5, 2.5 * H, "Upscaled", fontdict = alignment)
-            axis.text(-5, 3.5 * H, "VAE", fontdict = alignment)
+            axis.text(-5, 1.5 * H, "Binarised\nBernoulli sampling", fontdict = alignment)
+            axis.text(-5, 2.5 * H, "Downsampled\nMean filter", fontdict = alignment)
+            axis.text(-5, 3.5 * H, "Upscaled\nBicubic", fontdict = alignment)
+            axis.text(-5, 4.5 * H, "Upscaled\nVAE", fontdict = alignment)
             
             axis.set_xticks(numpy.array([]))
             axis.set_yticks(numpy.array([]))

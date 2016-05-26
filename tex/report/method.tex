@@ -98,4 +98,5 @@ Maximizing $\mathcal{L}$ wrt. the model parameters, $\phi$ and $\theta$, thereby
 	\item Reconstruct HR images using the VAE for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$. The encoder and decoder consists of two \textbf{fully-connected neural networks} with $200$ hidden neurones each and \textbf{rectifying activation functions}. $L = 1$ for the sampling of $\vec{z}$ as Kingma et al \cite{Kingma2013}.
 	\change{Add batch size.}
 	\item Compare reconstructions using VAE with a bicubic interpolation upscaling.
+	\item Learning rate of $\num{e-3}$.
 \end{itemize}
