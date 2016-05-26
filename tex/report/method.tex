@@ -1,17 +1,9 @@
 \section{Materials and methods}
 \label{sec:method}
 
-\subsection{Data}
-\label{sub:data}
-Our model is learned for the MNIST dataset \cite{MNIST} of black and white handwritten digits $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, with a training set of size $N_{val} + N_{train} = 60,000$ and a test set of size $N_{test}=10,000$.  
+Our model, shown in Figure~\ref{fig:diagram}, takes in i.i.d. images, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. For each image $\vec{x} = \vec{X}\order{i}$, it can the generate an HR image, $\tilde{\vec{x}}_{HR}$, from a downsampled LR version $\vec{x}_{LR}$, as close to the original image $\vec{x}_{HR}$.
 
 For i.i.d. data like this, each pixel are assumed to follow a marginal joint probability distribution, which makes it possible to decompose the log-likelihood of each datapoint, $i$, in a sum $\log \dec{\vec{X}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}}$. 
-
-
-% \begin{equation}
-% 	\log \dec{\vec{X}} = \log \dec{\vec{X}\order{1}, ..., \vec{X}\order{N}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}} 
-% \end{equation}
-Generalizing the VAE model from a single image to all, we write $\vec{x} = \vec{X}\order{i}$ for uncluttered and simple notation in the following equations.
 
 \begin{figure*}
 	\centering
@@ -20,59 +12,56 @@ Generalizing the VAE model from a single image to all, we write $\vec{x} = \vec{
 	\label{fig:diagram}
 \end{figure*}
 
+\subsection{Variational auto-encoder}
+\label{sub:vae}
 
-\subsection{Model}
-\label{sub:the_model}
-
-To test the performance and robustness of a VAE when in lack of variables, which is the case for a SR-task, we made a model as seen in \ref{fig:diagram}. It is generating HR images, $\tilde{\vec{x}}_{HR}$, from downsampled LR images $\vec{x}_{LR}$, as close to the binarised original images $\vec{x}_{HR}$. $\vec{x}_{HR}$ are binarised using Bernoulli sampling and then downsampled to $\vec{x}_{LR}$ by a factor of $d$ using a mean filter (pooling layer).
-
-\subsubsection{Variational auto-encoder}
-\label{ssub:vae}
-The VAE make reconstructions from a underlying probalistic data generating process inferring the same structure between similar digits. The similarity lies in the latent space, $\vec{z}$, which is here the stochastic layer seen in the center of the model. 
+The VAE makes reconstructions from a underlying probalistic data generating process inferring the same structure between similar digits. The similarity lies in the latent space, $\vec{z}$, which is the stochastic layer seen in the center of the model in Figure~\ref{fig:diagram}. 
 
 The input $\vec{x}_{LR}$ is mapped to the latent space through the encoder sampling from a normal distribution
-$\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$, where $\enc{\vec{z}|\vec{x}}$ is a variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$. 
+$\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$, where $\enc{\vec{z}|\vec{x}}$ is a variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
 
-Given the sampled $\vec{z}$ the decoder can generate a reconstruction $\tilde{\vec{x}}_{HR}$, where each pixel are assumed to be drawn from a Bernoulli distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$ for binarised $\vec{x}$ (our case) or from a normal distribution $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{N}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z}),\vec{\sigma}^2_\theta(\vec{z})}$ for continuous $\vec{x}$ like f.ex. face images.
-
-The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative Bernoulli distribution $\dec{\vec{x}|\vec{z}}$. Instead of sampling from $\dec{\vec{x}|\vec{z}}$ we just draw $x=\vec{\mu}_\theta(\vec{z})$ as the most probable pixel-values for the reconstruction. 
-
-This is model selection by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as used by \cite{Kingma2013}. 
+Given the sampled $\vec{z}$, the decoder can generate a reconstruction $\tilde{\vec{x}}_{HR}$, where each pixel are assumed to be drawn from a Bernoulli distribution, $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$, for binary data or from a normal distribution, $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{N}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z}),\vec{\sigma}^2_\theta(\vec{z})}$, for continuous data.
+\rephrase{This is model selection} by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as in Kingma et al \cite{Kingma2013}. 
  
-To learn the variational parameters $\phi$ and generative parameters $\theta$ (weights in the neural networks) jointly we obtain a per-pixel training criterion from the variational lower bound $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ derived from the mean-field approximation to the marginal log-likelihood:
+The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative distribution $\dec{\vec{x}|\vec{z}}$.
+% Instead of sampling from $\dec{\vec{x}|\vec{z}}$, we just draw $x=\vec{\mu}_\theta(\vec{z})$ as the most probable pixel values for the reconstruction.
+
+To learn the variational parameters $\phi$ and the generative parameters $\theta$ (weights in the neural networks) jointly, we obtain a per-pixel training criterion from the variational lower bound $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ derived from the mean-field approximation to the marginal log-likelihood:
 \begin{equation}
-	\log \dec{\vec{x}} = D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}} + \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}
+	\log \dec{\vec{x}} = D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}|\vec{x}}} + \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}} ,
 \end{equation} 
-where it is decomposed like for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}. Here the first term is the Kullback-Leibler divergence, which is a non-negative entropy measure of how much the approximated distribution $\enc{\vec{z}|\vec{x}}$  differs from the true posterior $\dec{\vec{z}|\vec{x}}$:
+where it is decomposed as for the EM-algorithm and variational inference \cite[\S10.2]{Bishop2006}. Here, the first term is the Kullback--Leibler divergence, which is a non-negative entropy measure of how much the approximated distribution $\enc{\vec{z}|\vec{x}}$ differs from the true posterior $\dec{\vec{z}|\vec{x}}$:
 \begin{equation}
-	D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}} = -\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
+    D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}|\vec{x}}} = \int  \enc{\vec{z}|\vec{x}} \log \parens*{ \frac{\enc{\vec{z}|\vec{x}}}{\dec{\vec{x}|\vec{z}}} } \D{\vec{z}} .
 \end{equation}
 
-Since the KL-divergence is non-negative the second term (``free energy'') here works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ , so maximizing the lower bound wrt. the model parameters we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$ and thereby pushes the KL-divergence towards zero bringing the approximated variational distribution closer to the true posterior.
-The lower bound can be decomposed and rewritten by:
-
+Since the KL divergence is non-negative, the second term (the ``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$, so maximizing the lower bound with regards to the model parameters, we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$, thereby pushing the KL divergence towards zero and bringing the approximated variational distribution closer to the true posterior.
+The lower bound can be decomposed and rewritten as:
 \begin{gather}
 	\begin{split}
 		\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}} 
-		& = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\ 
+		& = \int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x},\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}} \\
 		& = \E_{\enc{\vec{z}|\vec{x}}} \brackets{- \log \enc{\vec{z}|\vec{x}} + \log \dec{\vec{x},\vec{z}} } 
 		\\
-		& = -D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} }    	
-	\end{split} 
+		& = -D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}} }
+        \\ & \hphantom{{}=}
+        + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } ,	
+	\end{split}
 \end{gather}
-where the first term is another KL-divergence acting as a regularisation term for $\vec{\phi}$ enforcing $\enc{\vec{z}|\vec{x}}$ to be similar to the prior $\dec{\vec{z}}=\mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on training data.
+where the first term is another KL divergence acting as a regularisation term for $\vec{\phi}$ forcing $\enc{\vec{z}|\vec{x}}$ to be similar to the prior $\dec{\vec{z}} = \mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on the training data.
 % \begin{equation}
-% 	-D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}} } = \frac{1}{2}\sum^J_{j+1}\parens{1 + \log \sigma_j ^2 - \mu_j^2 - \sigma_j^2}
+% 	-D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}} } = \frac{1}{2}\sum^J_{j+1}\parens{1 + \log \sigma_j ^2 - \mu_j^2 - \sigma_j^2}
 % \end{equation}
 
 The second term is the expected negative per-pixel reconstruction error, which has a differentiable Monte Carlo estimate:
 \begin{equation}
 	\E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } \simeq \frac{1}{L}\sum^L_{l=1} \log \dec{\vec{x}|\vec{z}\order{l}}.
 \end{equation}
-where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(\vec{0},\vec{I})$.
+where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(\vec{0},\vec{I})$.\footnote{Here $\odot$ signifies element-wise
+multiplication.}
 
-Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL-term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$. From this we a get minibatch estimate $\tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X^M}} = \frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ averaging over a subset $\vec{X}^M = \set{\vec{X}\order{i}}^M_{i=1}$. 
-For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ are found using \texttt{Theano.grad()} and the parameters $\phi$ and $\theta$ (weights in the neural networks) updated using the \texttt{ADAM}-method \cite{Kingma2014b} for each minibatch. 
+Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$. From this we a get minibatch estimate $\tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X^M}} = \frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ averaging over a subset $\vec{X}^M = \set{\vec{X}\order{i}}^M_{i=1}$. 
+For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ are found and the parameters $\phi$ and $\theta$ are updated using the Adam method \cite{Kingma2014b}. 
 
 % Differentiation of L
 % Reparameretization trick
@@ -83,7 +72,11 @@ For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\thet
 \subsection{Experiments}
 \label{sub:experiments}
 
-HR images was reconstructed using our model for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$ using a learning rate of $\num{e-3}$, which gave a good balance between computation time and \rephrase{smoothness of the learning curves} (\rephrase{correct optimisation}).
-The encoder and decoder consists of two fully-connected neural networks with $200$ hidden neurones each using rectifiers as activation functions to \emph{get the effect} of a deep neural network without too much computation time.
+We have trained our model on the MNIST dataset \cite{MNIST} of greyscale handwritten digits, combining the training set and validation set to get $60000$ images.  
+To get a smaller number of configurations to reconstruct, we binarse the HR images before downsampling them by a factor of $d$ using a mean filter.
+The binarisation is done by Bernoulli sampling each pixel at every epoch, allowing for variations in the input data.
+
+HR images was then reconstructed using our model for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$ using a learning rate of $\num{e-3}$, which gave a good balance between computation time and \rephrase{smoothness of the learning curves} (\rephrase{correct optimisation}).
+The encoder and decoder consists of two fully-connected neural networks with $200$ hidden neurones each using rectifiers as activation functions to \rephrase{get the effect} of a deep neural network without too much computation time.
 The sampling size for the latent space was $L = 1$ and the mini-batch size was $M = 100$ as in Kingma et al \cite{Kingma2013}.
 The reconstructions using our method are then compared to reconstructions upscaled using bicubic interpolation.
