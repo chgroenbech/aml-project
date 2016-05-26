@@ -3,12 +3,12 @@
 
 We have developed a new method for super-resolution using a variational auto-encoder.
 This method gives better results than the image-processing method, bicubic interpolation, especially when the images were downsampled four times.
-The method is also close to independent of downsampling for the values investigated, particularly for thicker style digits.
+The method is also close to independent of downsampling for the values investigated, particularly for digits with thick strokes.
 
 There are many future directions to gain better results.
 Since we are working with images, it would be beneficial to use convolutional neural networks to better capture features in the images.
 Along the same point, changing to a per-feature loss function as Johnson et al \cite{Johnson16} from a per-pixel loss function, the method would be more robust toward \rephrase{e.g.} translations.
 The labels of the images could also be used with a semi-supervised version of our model as Kingma et al \cite{Kingma2014}. This would enable the method to identify the digits and use this when upscaling.
 
-We would also like to try our developed method on other dataset, e.g. the Frey Faces dataset\footnote{Available at \url{http://www.cs.nyu.edu/~roweis/data.html}.} with continuous values.
+We would also like to try our method on diffently structured datasets, e.g. the Frey Faces dataset\footnote{Available at \url{http://www.cs.nyu.edu/~roweis/data.html}.} with continuous values, or on datasets with larger dimensions.
 For more complex images, the downsampling method could also include a low-pass filter to reduce artefacts from high-frequent details.
