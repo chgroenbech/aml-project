@@ -1,5 +1,8 @@
 \section*{Abstract}
 \label{sec:abstract}
 
-\change{Write real abstract as the last section.}
-\lipsum[1]
+We introduce a new method for super-resolution imaging by using a variational auto-encoder.
+We use this method on images by first downsampling them by either a factor of $2$ or $4$ and then reconstructing the original images.
+We get superior reconstructions compared to traditional image-processing \rephrase{methods}, especially when the images have been downsampled four times.
+We also compare the performance of the method to a variational auto-encoder with no downsampling, and observe differences of approximately $\SI{1}{nats}$ and $\SI{10}{nats}$ in the variational lower bound for the downsampling factors of $2$ and $4$, respectively.
+Lastly, we also investigate to a lesser extent whether the variational auto-encoder is independent of resolution and find that it is \rephrase{in some cases}.
