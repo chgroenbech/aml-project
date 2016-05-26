@@ -3,7 +3,7 @@
 
 \subsection{Data}
 \label{sub:data}
-We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evauluate the performance on reconstructions of the 10000 images test set. 
+We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evaluate the performance on reconstructions of the 10000 images test set. 
 For i.i.d. data like this, each pixel are assumed to follow a marginal joint probability distribution, which makes it possible to decompose the log-likelihood of each datapoint, $i$, in a sum $\log \dec{\vec{X}} = \sum^N_{i=1} \log \dec{\vec{X}\order{i}}$. 
 
 
@@ -23,7 +23,7 @@ Generalizing the VAE model from a single image to all, we write $\vec{x} = \vec{
 \subsection{Model}
 \label{sub:the_model}
 
-To test the performance and robustness of a VAE when in lack of variables, which is the case for a SR-task, we made a model as seen in \ref{fig:diagram}. It is generating HR images, $\tilde{\vec{x}}_{HR}$ as close to the binarised original images $\vec{x}_{HR}$ from downsampled LR images $\vec{x}_{LR}$. $\vec{x}_{HR}$ are binarised using Bernoulli sampling and then downsampled to $\vec{x}_{LR}$ by a factor of $d$ using a mean filter (pooling layer).
+To test the performance and robustness of a VAE when in lack of variables, which is the case for a SR-task, we made a model as seen in \ref{fig:diagram}. It is generating HR images, $\tilde{\vec{x}}_{HR}$, from downsampled LR images $\vec{x}_{LR}$, as close to the binarised original images $\vec{x}_{HR}$. $\vec{x}_{HR}$ are binarised using Bernoulli sampling and then downsampled to $\vec{x}_{LR}$ by a factor of $d$ using a mean filter (pooling layer).
 
 \subsubsection{Variational auto-encoder}
 \label{ssub:vae}
@@ -38,7 +38,7 @@ The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec
 
 This is model selection by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as used by \cite{Kingma2013}. 
  
-To learn the models variational parameters $\phi$ and generative parameters $\theta$ jointly we obtain a per-pixel training criterion from the variational lower bound $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ derived from the mean-field approximation to the marginal log-likelihood:
+To learn the variational parameters $\phi$ and generative parameters $\theta$ (weights in the neural networks) jointly we obtain a per-pixel training criterion from the variational lower bound $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ derived from the mean-field approximation to the marginal log-likelihood:
 \begin{equation}
 	\log \dec{\vec{x}} = D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}} + \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}
 \end{equation} 
@@ -47,7 +47,7 @@ where it is decomposed like for the EM-algorithm and variational inference \cite
 	D_{KL}\parens{ \enc{\vec{z}|\vec{x}}||\dec{\vec{z}|\vec{x}}} = -\int \enc{\vec{z}|\vec{x}} \log \curlies*{ \frac{\dec{\vec{x}|\vec{z}}}{\enc{\vec{z}|\vec{x}} } } \D{\vec{z}}
 \end{equation}
 
-Since the KL-divergence is non-negative the second term (``free energy'') works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ , so maximizing the lower bound wrt. the model parameters we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$ and thereby pushes the KL-divergence towards zero bringing approximated variational distribution closer to the true posterior.
+Since the KL-divergence is non-negative the second term (``free energy'') here works as a variational lower bound and follows the inequality $\log \dec{\vec{x}} \ge \mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}$ , so maximizing the lower bound wrt. the model parameters we get $\mathcal{L}\parens{\vec{\theta},\vec{\phi};\vec{x}}\rightarrow \log \dec{\vec{x}}$ and thereby pushes the KL-divergence towards zero bringing the approximated variational distribution closer to the true posterior.
 The lower bound can be decomposed and rewritten by:
 
 \begin{gather}
