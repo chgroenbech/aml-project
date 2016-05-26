@@ -39,8 +39,7 @@ def main():
     
     # Main setup
     
-    latent_sizes = [20]
-    # latent_sizes = [2, 5, 10, 20, 30, 50, 100]
+    latent_sizes = [2, 5, 10, 20, 30, 50, 100]
     downsampling_factors = [1, 2, 4]
     N_epochs = 50
     binarise_downsampling = False
@@ -85,10 +84,17 @@ def main():
 
     N_train_batches = X_train.shape[0] / batch_size
     N_test_batches = X_test.shape[0] / batch_size
+    
+    if bernoulli_sampling:
+        preprocess = bernoullisample
+    else:
+        preprocess = numpy.round
 
     # Setup shared variables
-    X_train_shared = theano.shared(bernoullisample(X_train), borrow = True)
-    X_test_shared = theano.shared(bernoullisample(X_test), borrow = True)
+    X_train_shared = theano.shared(preprocess(X_train), borrow = True)
+    X_test_shared = theano.shared(preprocess(X_test), borrow = True)
+    X_test_shared_fixed = theano.shared(numpy.round(X_test), borrow = True)
+    X_test_shared_normal = theano.shared(X_test, borrow = True)
     
     all_runs_duration = 0
     
@@ -228,6 +234,11 @@ def main():
             givens = {symbolic_x_HR: X_test_shared[batch_slice]}
         )
     
+        test_model_fixed = theano.function(
+            [symbolic_batch_index], ll_eval,
+            givens = {symbolic_x_HR: X_test_shared_fixed[batch_slice]}
+        )
+    
         def train_epoch(learning_rate):
             costs = []
             for i in range(N_train_batches):
@@ -239,6 +250,13 @@ def main():
             costs = []
             for i in range(N_test_batches):
                 cost_batch = test_model(i)
+                costs += [cost_batch]
+            return numpy.mean(costs)
+    
+        def test_epoch_fixed():
+            costs = []
+            for i in range(N_test_batches):
+                cost_batch = test_model_fixed(i)
                 costs += [cost_batch]
             return numpy.mean(costs)
     
@@ -256,11 +274,12 @@ def main():
         
             # Shuffle train data
             numpy.random.shuffle(X_train)
-            X_train_shared.set_value(bernoullisample(X_train))
+            X_train_shared.set_value(preprocess(X_train))
         
             # TODO: Using dynamically changed learning rate
             train_cost = train_epoch(learning_rate)
             test_cost = test_epoch()
+            test_cost_fixed = test_epoch_fixed()
         
             epoch_duration = time.time() - epoch_start
         
@@ -281,6 +300,9 @@ def main():
         N_reconstructions = 50
     
         X_test_eval = X_test_shared.eval()
+        X_test_eval_fixed = X_test_shared_fixed.eval()
+        X_test_eval_normal = X_test_shared_normal.eval()
+        
         subset = numpy.random.randint(0, len(X_test_eval), size = N_reconstructions)
     
         x_original = X_test_eval[numpy.array(subset)]
@@ -288,10 +310,23 @@ def main():
         z = get_output(l_z, x_LR).eval()
         x_reconstructed = x_mu_sample.eval({symbolic_z: z})
     
+        x_original_fixed = X_test_eval_fixed[numpy.array(subset)]
+        x_LR_fixed = get_output(l_enc_HR_downsample, x_original_fixed).eval()
+        z_fixed = get_output(l_z, x_LR_fixed).eval()
+        x_reconstructed_fixed = x_mu_sample.eval({symbolic_z: z_fixed})
+        
+        originals = X_test_eval_normal[numpy.array(subset)]
+        
         reconstructions = {
             "originals": x_original,
             "downsampled":  x_LR,
             "reconstructions": x_reconstructed
+        }
+        
+        reconstructions_fixed = {
+            "originals": x_original_fixed,
+            "downsampled":  x_LR_fixed,
+            "reconstructions": x_reconstructed_fixed
         }
         
         ## Manifold
@@ -365,7 +400,9 @@ def main():
                     "training cost function": cost_train,
                     "test cost function": cost_test
                 },
+                "originals": originals,
                 "reconstructions": reconstructions,
+                "reconstructions (fixed)": reconstructions_fixed,
                 "manifold": {
                     "samples": samples
                 },
@@ -373,7 +410,7 @@ def main():
             }
         }
         
-        file_name = "results{}_ds{}{}_l{}_e{}.pkl".format("_b" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
+        file_name = "results{}_ds{}{}_l{}_e{}.pkl".format("_bs" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
     
         with open(data_path(file_name), "w") as f:
             pickle.dump(setup_and_results, f)

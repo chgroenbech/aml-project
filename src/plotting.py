@@ -22,7 +22,8 @@ from aux import data_path, figure_path, script_directory, colours
 TeX = False
 
 pyplot.rc("axes", prop_cycle = cycler("color", colours))
-pyplot.rc("figure", figsize = (10, 3.5))
+# pyplot.rc("figure", figsize = (10, 3.5)) # for the poster
+pyplot.rc("figure", figsize = (10, 6))
 
 if TeX:
     pyplot.rc("text", usetex = True)
@@ -38,12 +39,15 @@ def main():
     # Setup
     
     downsampling_factors = [1, 2, 4]
-    latent_sizes = [5, 10, 30, 50]
-    # latent_sizes = [2, 5, 10, 30, 50, 100]
+    # latent_sizes = [5, 10, 30, 50] # for the poster
+    latent_sizes = [2, 5, 10, 30, 50, 100]
     # latent_sizes = [2, 5, 10, 30]
     N_epochs = 50
     binarise_downsampling = False
     bernoulli_sampling = True
+    
+    downsampling_factor_fixed = 2
+    latent_size_downsampling = 30
     
     N_reconstructions_max = 6
     
@@ -53,16 +57,19 @@ def main():
     # Table for results
     table = []
     
+    learning_curves_latent_size = []
+    
     for latent_size in latent_sizes:
         
-        learning_curves = []
+        learning_curves_downsampling = []
         reconstructions_set = []
         
         for downsampling_factor in downsampling_factors:
             
             # Data
     
-            specifications = "{}ds{}{}_l{}_e{}".format("b_" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
+            # specifications = "{}ds{}{}_l{}_e{}".format("b_" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
+            specifications = "{}ds{}{}_l{}_e{}".format("bs_" if bernoulli_sampling else "", downsampling_factor, "b" if binarise_downsampling else "", latent_size, N_epochs)
             file_name = "results_" + specifications + ".pkl"
     
             try:
@@ -85,7 +92,9 @@ def main():
             ## Learning curves
     
             learning_curve = results["learning curve"]
-            learning_curves.append({"data": learning_curve, "downsampling factor": downsampling_factor})
+            learning_curves_downsampling.append({"data": learning_curve, "downsampling factor": downsampling_factor})
+            if downsampling_factor == downsampling_factor_fixed:
+                learning_curves_latent_size.append({"data": learning_curve, "latent size": latent_size})
             
             epochs = numpy.array(learning_curve["epochs"])
             cost_train = numpy.array(learning_curve["training cost function"])
@@ -98,7 +107,8 @@ def main():
                 cost_test_ds1 = cost_test[-1]
                 cost_train_ds1 = cost_train[-1]
             elif downsampling_factor > 1:
-                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_train[-1] - cost_train_ds1, cost_test[-1], cost_test[-1] - cost_test_ds1)
+                table_row = "& {:d} & {:d} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1] - cost_train_ds1, cost_test[-1] - cost_test_ds1)
+                # table_row = "& {:d} & {:d} & {:.2f} & {:.2f} & {:.2f} & {:.2f} \\\\\n".format(latent_size, downsampling_factor, cost_train[-1], cost_train[-1] - cost_train_ds1, cost_test[-1], cost_test[-1] - cost_test_ds1) # for the poster
                 table.append(table_row)
             
             figure = pyplot.figure()
@@ -119,15 +129,17 @@ def main():
             ## Reconstruction
     
             reconstructions = results["reconstructions"]
+            # reconstructions = results["reconstructions (fixed)"]
             
             if downsampling_factor > 1:
                 reconstructions_set.append({"data": reconstructions, "downsampling factor": downsampling_factor})
             
-            x = reconstructions["originals"]
+            # x = reconstructions["originals"]
+            x = results["originals"]
             x_LR = reconstructions["downsampled"]
             x_reconstructed = reconstructions["reconstructions"]
     
-            N_reconstructions = len(x_reconstructed)
+            N_reconstructions = min(N_reconstructions_max, len(x_reconstructed))
     
             image = numpy.zeros((H * 4, W * N_reconstructions))
 
@@ -174,7 +186,7 @@ def main():
             imsave(plot_name, 1 - image)
             print("Reconstructions saved as {}.".format(plot_name))
             
-            # Single Reconstruction example
+            # Single reconstruction example
             
             image_original = x[0].reshape((H, W))
             plot_name = figure_path("example_original_" + specifications + ".png")
@@ -260,14 +272,14 @@ def main():
             
             print
         
-        specifications = "{}ds{}_l{}_e{}".format("b_" if bernoulli_sampling else "", "b" if binarise_downsampling else "", latent_size, N_epochs)
+        specifications = "{}ds{}_l{}_e{}".format("bs_" if bernoulli_sampling else "", "b" if binarise_downsampling else "", latent_size, N_epochs)
         
-        if len(learning_curves) > 1:
+        if len(learning_curves_downsampling) > 1:
             
             figure = pyplot.figure()
             axis = figure.add_subplot(1, 1, 1)
             
-            for c, learning_curve in enumerate(learning_curves):
+            for c, learning_curve in enumerate(learning_curves_downsampling):
                 
                 epochs = numpy.array(learning_curve["data"]["epochs"])
                 cost_train = numpy.array(learning_curve["data"]["training cost function"])
@@ -285,7 +297,7 @@ def main():
             axis.set_ylabel("Variational lower bound")
             axis.set_xlabel('Epochs')
         
-            plot_name = figure_path("learning_curves_" + specifications + ".pdf")
+            plot_name = figure_path("learning_curves_downsampling_" + specifications + ".pdf")
             pyplot.savefig(plot_name, bbox_inches='tight')
             print("Learning curves for different downsampling factors saved as {}.".format(plot_name))
             
@@ -364,6 +376,40 @@ def main():
             
         
         print
+    
+    if len(learning_curves_latent_size) > 1:
+        
+        figure = pyplot.figure()
+        axis = figure.add_subplot(1, 1, 1)
+        
+        for c, learning_curve in enumerate(learning_curves_latent_size):
+            
+            epochs = numpy.array(learning_curve["data"]["epochs"])
+            cost_train = numpy.array(learning_curve["data"]["training cost function"])
+            cost_test = numpy.array(learning_curve["data"]["test cost function"])
+            latent_size = learning_curve["latent size"]
+            
+            label_train = "$N_\\mathbf{{z}} = {}$, training set".format(latent_size)
+            label_test = "$N_\\mathbf{{z}} = {}$, test set".format(latent_size)
+            
+            if latent_size == latent_size_downsampling:
+                c = 1
+            elif c >= 1 and latent_size < latent_size_downsampling:
+                c += 1
+            
+            axis.plot(epochs, cost_train, color = colours[c], label = label_train)
+            # axis.plot(epochs, cost_test, linestyle = 'dashed', color = colours[c], label = label_test)
+    
+        pyplot.legend(loc = "best")
+    
+        axis.set_ylabel("Variational lower bound")
+        axis.set_xlabel('Epochs')
+        
+        specifications = "{}ds{}{}_l_e{}".format("bs_" if bernoulli_sampling else "", downsampling_factor_fixed, "b" if binarise_downsampling else "", N_epochs)
+        plot_name = figure_path("learning_curves_latent_size_" + specifications + ".pdf")
+        pyplot.savefig(plot_name, bbox_inches='tight')
+        print("Learning curves for different latent sizes saved as {}.".format(plot_name))
+    
     
     with open(data_path("results_variational_lower_bound.tex"), "w") as results_file:
         for table_row in table:

@@ -4,55 +4,70 @@
 \change{Write references to figures.}
 
 \begin{figure*}
-	\centering
-	\includegraphics[width=\textwidth]{learning_curves_b_ds_l30_e50}
-	\caption{Learning curves for both training and test sets for differing downsampling factors $d$ with a latent size of $N_{\vec{z}} = 30$ and learning rate of $\num{e-3}$. \change{Change dimensions to be square.}}
-	\label{fig:learning_curves}
+    \centering
+	\hspace*{\fill}
+    \subbottom[]{
+        \includegraphics[width = .45\linewidth]{learning_curves_downsampling_bs_ds_l30_e50}
+    }
+    \hfill
+    \subbottom[]{
+        \includegraphics[width = .45\linewidth]{learning_curves_latent_size_bs_ds2_l_e50}
+    }
+	\hspace*{\fill}
+    \caption{Learning curves for both training and test sets for differing downsampling factors $d$ with a latent size of $N_{\vec{z}} = 30$ and learning rate of $\num{e-3}$. \change{Change dimensions to be square.}}
+    \label{fig:learning_curves}
 \end{figure*}
 
 \change{Add learning curves for latent sizes.}
 
-\begin{table*}
-	\centering
-	\caption{
-		The variational lower bound after $50$ epochs for both training and test set as well as the differences from the variational lower bound without downsampling, $\mathcal{L}\order{d = 1}$.
-		% for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
-		\change{Include original before binarising.}
-		\change{Remove variational lower bounds and change to column table.}
-	}
-	\label{tab:variational_lower_bound}
-	\setlength{\tabcolsep}{1em}
-	\sisetup{
-		table-number-alignment = center
-	}
-	\begin{tabular}{
-			l@{}
-			S[table-format = 2.0]
-			S[table-format = 1.0]
-			S[table-format = -3.2]
-			S[table-format = -3.2]
-			S[table-format = -2.2]
-			S[table-format = -2.2]
-		}
-		\toprule
-		& {$N_{\vec{z}}$} & {$d$} & {$\mathcal{L}\idx{train}$}
-		& {$\mathcal{L}\idx{train} - \mathcal{L}\idx{train}\order{d = 1}$}
-		& {$\mathcal{L}\idx{test}$}
-		& {$\mathcal{L}\idx{test} - \mathcal{L}\idx{test}\order{d = 1}$} \\
-		\midrule
-		\input{../../data/results_variational_lower_bound}
-		\bottomrule
-	\end{tabular}
-\end{table*}
+\begin{table}
+    \centering
+    \caption{
+        The variational lower bound after $50$ epochs for both training and test set as well as the differences from the variational lower bound without downsampling, $\mathcal{L}\order{d = 1}$.
+        % for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$.
+        \change{Include original before binarising.}
+        \change{Remove variational lower bounds and change to column table.}
+    }
+    \label{tab:variational_lower_bound}
+    % \setlength{\tabcolsep}{1em}
+    \sisetup{
+        table-number-alignment = center
+    }
+    \begin{tabular}{
+            l@{}
+            S[table-format = 2.0]
+            S[table-format = 1.0]
+            S[table-format = -3.2]
+            S[table-format = -3.2]
+            S[table-format = -2.2]
+            S[table-format = -2.2]
+        }
+        \toprule
+        & {$N_{\vec{z}}$} & {$d$}
+        & {$\mathcal{L}\idx{train} - \mathcal{L}\idx{train}\order{d = 1}$}
+        & {$\mathcal{L}\idx{test} - \mathcal{L}\idx{test}\order{d = 1}$} \\
+        \midrule
+        \input{../../data/results_variational_lower_bound}
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\begin{figure*}
-	\centering
-	\includegraphics[width=.8\textwidth]{reconstructions_set_b_ds_l30_e50.pdf}
-	\caption{
-		Sampled numbers from the test set (binarised using Bernoulli sampling) for two downsampling factors,
-		their downsampled versions as well as upscaled reconstruction using bicubic interpolation and the VAE using a latent size $N_{\vec{z}}$ of 30.
-		\change{Maybe rejigger to be a column figure.}
-		\change{Maybe add homemade numbers.}
-	}
-	\label{fig:samples}
-\end{figure*}
+\begin{figure}
+    \centering
+    \subbottom[$d = 2$.]{
+        \includegraphics[width=\linewidth]{reconstructions_bs_ds2_l30_e50.pdf}
+    }
+    \\
+    \subbottom[$d = 4$.]{
+        \includegraphics[width=\linewidth]{reconstructions_bs_ds4_l30_e50.pdf}
+    }
+    \caption{
+        Sampled numbers from the test set (binarised using Bernoulli sampling) for two downsampling factors,
+        their downsampled versions as well as upscaled reconstruction using bicubic interpolation and the VAE using a latent size $N_{\vec{z}}$ of 30.
+        \change{Maybe rejigger to be a column figure.}
+        \change{Maybe add homemade numbers.}
+    }
+    \label{fig:samples}
+\end{figure}
+
+\change{Mention that reconstruction show the mean of the Bernoulli distribution}
