@@ -1,13 +1,14 @@
 \section{Discussion}
 \label{sec:discussion}
 
-The variational lower bound for $d = 2$ is comparable to the one for no downsampling after approximately $20$ iterations as seen in Figure~\ref{fig:learning_curves:downsampling_factor}, whereas it is consistently worse for $d = 4$, which makes sense the resolution is $d^2 = 16$ times as low for $d = 4$ compared to only $d^2 = 4$ times as low for $d = 2$.
-Varying the latent size, it is found that a latent size above $10$ does not yield a better variational lower bound as seen in Figure~\ref{fig:learning_curves:latent_size}, and for $N_{\vec{z}} \geq 30$ the variational lower bound is the same.
+The variational lower bound for $d = 2$ is comparable to the one for no downsampling after approximately $20$ iterations as seen in Figure~\ref{fig:learning_curves:downsampling_factor}, whereas it is consistently worse for $d = 4$, which makes sense when the resolution is $d^2 = 16$ times as low for $d = 4$ compared to only $d^2 = 4$ times as low for $d = 2$.
+Varying the latent size, it is found that a latent size above $10$ does not yield a higher variational lower bound as seen in Figure~\ref{fig:learning_curves:latent_size}, and for $N_{\vec{z}} \geq 30$ the variational lower bound is the same.
 
-Compared to variational lower bounds with no downsampling, the VAE for $d = 2$ is markedly better than the one for $d = 4$: $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{1}{nats}$ compared to $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{10}{nats}$.
-But the VAE reconstructions in Figure~\ref{fig:samples} for the two downsampling factors are visually comparable for the thicker numbers, but less so for the thinner ones, because the Bernoulli sampling is more likely break up the strokes making up the numbers for these.
-So the VAE is close to, but not completely robust towards the losses in resolution.
+Compared to the variational lower bounds with no downsampling, the VAE for $d = 2$ is markedly better than the one for $d = 4$: $\mathcal{L}\idx{test}\order{d = 2} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{1}{nats}$ compared to $\mathcal{L}\idx{test}\order{d = 4} - \mathcal{L}\idx{test}\order{d = 1} \approx \SI{10}{nats}$.
+But the VAE reconstructions in Figure~\ref{fig:samples} for the two downsampling factors are visually comparable for the thicker digits, but less so for the thinner digits. The thin strokes are more likely to break after the Bernoulli sampling, so the last pixels valuable for positioning similar digits close in latent space and inferring the digit structure are lost and reconstructions confused.  
+So the VAE is close to, but not completely robust towards the losses in resolution, when information is sparse. 
 
 Comparing the reconstructions using bicubic interpolation and the VAE visually, the VAE gives better results for $d = 2$.
-While the bicubic interpolation reconstructs the binarised versions, the VAE reconstructs succeeds in capturing the original forms.
+While the bicubic interpolation reconstruct the binarised versions, the VAE reconstructions succeed in capturing the original forms.
 For $d = 4$, this gives a remarkable difference in favour of the VAE.
+When interpolating the new pixels in between LR-pixels, bicubic interpolation only considers 16 neighbouring pixels ($4\times 4$), whereas the VAE uses a strong statistical inference over all pixels in the LR image and all images in the training set. So utilizing more information about the structure of digits helps the VAE a lot, but biases unseen symbols, f.ex. non-digits, into the forms of the most similar known digits.    
