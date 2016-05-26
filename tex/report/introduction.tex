@@ -3,10 +3,10 @@
 
 Modern research in deep learning, using convolutional neural networks \cite{Dong15} and variational auto-encoders \cite{Kingma2013, Johnson16}, provide promising applications for better super-resolution imaging (SR).
 
-The use for SR are vast and important for presenting high-quality content fast in modern digital media with compression schemes due to restricted bandwidth.
+The use for SR are vast and important for presenting high-quality content fast in modern digital media under compression schemes due to limited bandwidth.
 Online streaming services, can provide faster streaming by applying SR on low-resolution movies locally on the device.
 Traditional techniques infer information from patches within the image or between frames to lower the entropy and signal-to-noise ratio. 
 
 % Statistical inference from low to high dimensions like these require generating the most probable values from a prior learned over the structure in images. As Kingma et al \cite{Kingma2013} suggests, Variational auto-encoders could be highly applicaple for this together with image denoising and inpainting in case of missing data.
 
-Following Kingma et al \cite{Kingma2013}, we propose a new SR method using a variational auto-encoder, which can infer structure in high-resolution images from low-resolution images just from reconstructing the underlying process. We compare the reconstructions against traditional image-processing upscaling, and we expect our model to yield better reconstructions. Because of the behaviour of a variational auto-encoder, we also expect the model to be independent of input resolution.
+Following Kingma et al \cite{Kingma2013}, we propose a new SR method using a variational auto-encoder, which can infer structure in high-resolution images from low-resolution images from reconstructing the underlying process. We compare the reconstructions against traditional image-processing upscaling, and we expect our model to yield better reconstructions. Because of the behaviour of a variational auto-encoder, we also expect the model to be independent of input resolution.

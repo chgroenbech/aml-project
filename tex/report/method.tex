@@ -21,7 +21,8 @@ The input $\vec{x}_{LR}$ is mapped to the latent space through the encoder sampl
 $\vec{z} \sim \enc{\vec{z}|\vec{x}} = \mathcal{N}\parens{ \vec{z}|\vec{\mu}_\phi(\vec{x}),\vec{\sigma}^2_\phi(\vec{x})}$, where $\enc{\vec{z}|\vec{x}}$ is a variational approximation to the intractable true posterior $\dec{\vec{z}|\vec{x}}$.
 
 Given the sampled $\vec{z}$, the decoder can generate a reconstruction $\tilde{\vec{x}}_{HR}$, where each pixel are assumed to be drawn from a Bernoulli distribution, $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{B}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z})}$, for binary data or from a normal distribution, $\vec{x} \sim \dec{\vec{x}|\vec{z}}=\mathcal{N}\parens{ \vec{x}|\vec{\mu}_\theta(\vec{z}),\vec{\sigma}^2_\theta(\vec{z})}$, for continuous data.
-\rephrase{This is model selection} by drawing the best fitting distribution from a family of distributions and the main idea behind variational Bayesian inference as in Kingma et al \cite{Kingma2013}. 
+
+We want to find the distributions over a family of distributions that most likely produced the data. The model selection scheme is here variational Bayesian inference as Kingma et al \cite{Kingma2013} do using neural networks.  
  
 The neural networks (NN) output the distribution parameters $\vec{\mu}_\phi(\vec{x})$ and $\vec{\sigma}^2_\phi(\vec{x})$ for the variational approximation $\enc{\vec{z}|\vec{x}}$ and $\vec{\mu}_\theta(\vec{z})$ for the conditional generative distribution $\dec{\vec{x}|\vec{z}}$.
 % Instead of sampling from $\dec{\vec{x}|\vec{z}}$, we just draw $x=\vec{\mu}_\theta(\vec{z})$ as the most probable pixel values for the reconstruction.
@@ -48,7 +49,7 @@ The lower bound can be decomposed and rewritten as:
         + \E_{\enc{\vec{z}|\vec{x}}} \brackets{\log \dec{\vec{x}|\vec{z}} } ,	
 	\end{split}
 \end{gather}
-where the first term is another KL divergence acting as a regularisation term for $\vec{\phi}$ forcing $\enc{\vec{z}|\vec{x}}$ to be similar to the prior $\dec{\vec{z}} = \mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on the training data.
+where the first term is another KL divergence acting as a regularisation term for $\vec{\phi}$ enforcing $\enc{\vec{z}|\vec{x}}$ to be similar to the prior $\dec{\vec{z}} = \mathcal{N}\parens{\vec{z}; \vec{0},\vec{I}}$. Leaving out this term would reduce the model to a normal auto-encoder with no restrictions on the distribution over $\vec{z}$ making it more likely to overfit on the training data.
 % \begin{equation}
 % 	-D\idx{KL}\parens{ \enc{\vec{z}|\vec{x}} \parallel \dec{\vec{z}} } = \frac{1}{2}\sum^J_{j+1}\parens{1 + \log \sigma_j ^2 - \mu_j^2 - \sigma_j^2}
 % \end{equation}
@@ -60,8 +61,9 @@ The second term is the expected negative per-pixel reconstruction error, which h
 where a reparameterisation trick is used for sampling $\vec{z}\order{l}= g_\phi (\vec{\epsilon}\order{l}, \vec{x})= \vec{\mu}_\phi(\vec{x}) + \vec{\sigma}_\phi(\vec{x}) \odot \vec{\epsilon}\order{l}$ with white noise sample $\vec{\epsilon}\order{l} \sim \mathcal{N}(\vec{0},\vec{I})$.\footnote{Here $\odot$ signifies element-wise
 multiplication.}
 
-Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$. From this we a get minibatch estimate $\tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X^M}} = \frac{N}{M}\sum^{M}_{i=1}\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ averaging over a subset $\vec{X}^M = \set{\vec{X}\order{i}}^M_{i=1}$. 
-For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$ are found and the parameters $\phi$ and $\theta$ are updated using the Adam method \cite{Kingma2014b}. 
+Using this Monte Carlo estimate and a differentiable analytical evaluation of the KL term as in Kingma et al \cite{Kingma2013}, we obtain our final Stochastic Gradient Variational Bayes estimate, $\tilde{\mathcal{L}}\parens{\vec{\theta},\vec{\phi};\vec{X}\order{i}}$.
+
+We use minibatch gradient descent for obtaining the negative gradients $-\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\theta},\vec{\phi};\vec{X}\order{M}}$, which are used for updating the parameters $\phi$ and $\theta$ with the Adam method \cite{Kingma2014b} maximizing the variational lower bound. 
 
 % Differentiation of L
 % Reparameretization trick
@@ -73,10 +75,10 @@ For this gradients $\nabla_{\phi,\theta} \tilde{\mathcal{L}}^M\parens{\vec{\thet
 \label{sub:experiments}
 
 We have trained our model on the MNIST dataset \cite{MNIST} of greyscale handwritten digits, combining the training set and validation set to get $60000$ images.  
-To get a smaller number of configurations to reconstruct, we binarse the HR images before downsampling them by a factor of $d$ using a mean filter.
-The binarisation is done by Bernoulli sampling each pixel at every epoch, allowing for variations in the input data.
+To get a smaller number of configurations to reconstruct, we binarise the HR images before downsampling them by a factor of $d$ using a mean filter.
+The binarisation is done by Bernoulli sampling for each pixel at every epoch, allowing for variations in the input data.
 
-HR images was then reconstructed using our model for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$ using a learning rate of $\num{e-3}$, which gave a good balance between computation time and \rephrase{smoothness of the learning curves} (\rephrase{correct optimisation}).
-The encoder and decoder consists of two fully-connected neural networks with $200$ hidden neurones each using rectifiers as activation functions to \rephrase{get the effect} of a deep neural network without too much computation time.
+HR images was then reconstructed using our model for different values of latent size $N_{\vec{z}}$ and downsampling factor $d$ using a learning rate of $\num{e-3}$, which gave a good balance between computation time and steady non-oscillating learning curves indicating correct optimisation.
+The encoder and decoder consists of two fully-connected neural networks with $200$ hidden neurones each using rectifiers as activation functions to obtain the features of a deep neural network without the high computation time.
 The sampling size for the latent space was $L = 1$ and the mini-batch size was $M = 100$ as in Kingma et al \cite{Kingma2013}.
 The reconstructions using our method are then compared to reconstructions upscaled using bicubic interpolation.
