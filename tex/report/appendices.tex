@@ -1,7 +1,21 @@
 \chapter{Visualisations}
 \label{sec:visualisations}
 
-\change{Add manifold.}
+Using a latent size of $N_{\vec{z}} = 2$, the latent space is visualised for both a downsampling factor of $2$ and $4$ in figure
+
+\begin{figure}
+    \centering
+    \subbottom[$d = 2$.\label{fig:manifold:downsampling:2}]{
+        \includegraphics[width=\linewidth]{manifold_bs_ds2_l2_e50}
+    }
+    \\
+    \subbottom[$d = 4$.\label{fig:manifold:downsampling:4}]{
+        \includegraphics[width=\linewidth]{manifold_bs_ds4_l2_e50}
+    }
+    \caption{The learned data manifold for our model latent size of $N_{\vec{z}} = 2$ for both downsampling factors. \rephrase{Since the prior of the latent space is Gaussian, linearly spaced coordinates on the unit square were transformed through the inverse CDF of the Gaussian to produce values of the latent variables z. For each of these values z, we plotted the corresponding generative $\dec{x|z}$ with the learned parameters $\theta$.}}
+    \label{fig:manifold}
+\end{figure} 
+
 \change{Add homemade numbers.}
 
 \chapter{Implementation}
