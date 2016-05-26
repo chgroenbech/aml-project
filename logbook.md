@@ -26,7 +26,7 @@ Time is a major delimiter for this project. The reason is threefold:
 * implementing a variational auto-encoder requires using several libraries, which we need to become familiar with; and
 * investigating values for hyperparameters and training the variational auto-encoder takes a lot of time.
 
-## Group work ##
+## Project work ##
 
 All through the project, we had weekly joint meetings with our supervisor and his other groups presenting and discussing our findings.
 
