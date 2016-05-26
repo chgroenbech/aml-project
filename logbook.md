@@ -28,20 +28,20 @@ Time is a major delimiter for this project. The reason is threefold:
 
 ## Group work ##
 
-All trough the project, we had weekly joint meetings with our supervisor and his other groups presenting and discussing our findings.
+All through the project, we had weekly joint meetings with our supervisor and his other groups presenting and discussing our findings.
 
 We have also used Git version control to synchronise and keep track of our progress. As such, a detailed account of all our contributions to the implementation, poster, and report can be seen on our [GitHub page](https://github.com/chgroenbech/aml-project).
 
 ### Week 1: 4--10 March ###
 
-We both read the background material in Bishop for the group meeting and talked about it ourselves:
+For the group meeting we both read and discussed the background material in Bishop:
 
 * §§10--10.1: variational learning.
 * §12.2: non-linear latent variable models.
 
 ### Week 2: 11--17 March ###
 
-We both read the original article on VAE (Kingma and Welling (2013)) for the group meeting and talked about it ourselves. We also brainstorm ideas for applications.
+We both read and discussed the original article on VAE (Kingma and Welling (2013)) for the group meeting. We also brainstormed ideas for applications.
 
 ### Week 3: 29--31 March ###
 
