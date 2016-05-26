@@ -46,6 +46,7 @@
 \usepackage{grffile}
 \usepackage{keyval}
 \usepackage{balance}					% Balance text columns
+\usepackage{flushend}
 \usepackage{tikz}
 
 % Load cross reference packages
@@ -150,6 +151,8 @@
 \setsecnumdepth{subparagraph}
 \maxsecnumdepth{subparagraph}
 \counterwithout{section}{chapter}
+\renewcommand*{\chaptitlefont}{\centering\normalfont\large\bfseries}
+\renewcommand*{\printchaptertitle}[1]{\chaptitlefont\MakeUppercase{#1}}
 \setsecheadstyle{\centering\large\bfseries\MakeUppercase}
 \setsubsecheadstyle{\flushleft\bfseries}
 \setsubsubsecheadstyle{\flushleft\itshape}
@@ -165,6 +168,11 @@
 \captiontitlefinal{}
 \newsubfloat{figure}
 \tightsubcaptions
+
+% Footnotes
+\setlength{\footmarkwidth}{0em}
+\setlength{\footmarksep}{-\footmarkwidth}
+% \setlength{\footparindent}{0em}
 
 % Units
 \sisetup{%
@@ -184,7 +192,7 @@
 \newcommand{\rephrase}[1]{\textcolor{orange}{#1}}
 
 % References
-\bibliographystyle{IEEEtran}
+\bibliographystyle{ieeetr}
 \addto\captionsbritish{
 	\renewcommand\bibname{References}
 	\renewcommand{\bibsection}{
