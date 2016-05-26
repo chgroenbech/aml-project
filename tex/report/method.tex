@@ -3,15 +3,8 @@
 
 \subsection{Data}
 \label{sub:data}
-\begin{itemize}
-	\item \textbf{MNIST dataset} \cite{MNIST}: i.i.d. images, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$, of handwritten digits:
-	\begin{itemize}
-		\item $28 \times 28$ pixels with one channel.
-		\item \textbf{Training set} (including validation set) of 60000 images.
-		\item \textbf{Test set} of 10000 images.
-	\end{itemize}
-	\item $\vec{x} = \vec{X}\order{i}$ for simplicity.
-\end{itemize}
+We train our model on the MNIST dataset \cite{MNIST} consisting of 70000 i.i.d. $28 \times 28$ pixel images of handwritten digits in black and white, $\vec{X} = \set{\vec{X}\order{i}}^N_{i=1}$. We use a training set of 60000 images including the validation set and evauluate the performance on reconstructions of the 10000 images test set.
+We write each image vector as $\vec{x} = \vec{X}\order{i}$ for simplicity in the following equations.
 
 \subsection{Model}
 \label{sub:the_model}
