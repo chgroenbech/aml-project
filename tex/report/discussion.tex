@@ -11,4 +11,4 @@ So the VAE is close to, but not completely robust towards the losses in dimensio
 Comparing the bicubic interpolation and VAE reconstructions visually, the VAE shows better results for $d = 2$.
 While the bicubic interpolation reconstruct the binarised versions, the VAE reconstructions succeed in capturing the original forms.
 For $d = 4$, this gives a remarkable difference in favour of the VAE.
-The advantage lies in VAE using statistical inference inbetween all pixels, where bicubic interpolation only considers $16$ neighbouring pixels. Using more information, helps the VAE a lot, but could bias reconstructions of unseen symbols, e.g.\ letters, forming approximation to digits instead.
+The advantage lies in VAE using statistical inference inbetween all pixels, where bicubic interpolation only considers $16$ neighbouring pixels. This helps the VAE a lot, but could bias reconstructions of unseen symbols, e.g.\ letters, forming approximation to digits instead.
